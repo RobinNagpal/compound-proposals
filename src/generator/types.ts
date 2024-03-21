@@ -1,5 +1,3 @@
-import { addAsset } from './features/addAsset';
-
 export const SupportedChains = ['Mainnet', 'Polygon', 'Arbitrum', 'Base'];
 
 export const BaseAssets = ['USDC', 'USDT', 'WETH'];
@@ -18,8 +16,7 @@ export type FeatureCache = { blockNumber: number };
 
 export interface FeatureConfig {
   artifacts: CodeArtifact[];
-  configs: Record<FEATURE, any>;
-  cache: FeatureCache;
+  configs: { [key: string]: any };
 }
 
 export interface Market {
@@ -82,6 +79,7 @@ export const AllMarkets: Market[] = [
 
 export type ConfigFile = {
   rootOptions: Options;
+  featureOptions: Record<string, FeatureConfig>;
 };
 
 export type CodeArtifact = {
@@ -101,6 +99,6 @@ export type CodeArtifact = {
 export interface FeatureModule<T extends {} = {}> {
   description: string;
   value: FEATURE;
-  cli: (args: { options: Options; cache: Cache }) => Promise<T>;
-  build: (args: { options: Options; cache: Cache; cfg: T }) => CodeArtifact;
+  cli: (args: { options: Options }) => Promise<T>;
+  build: (args: { options: Options; cfg: T }) => CodeArtifact;
 }
