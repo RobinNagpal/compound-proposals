@@ -80,9 +80,9 @@ export const addAsset: FeatureModule<AssetConfig> = {
 
     return asset;
   },
-  build({ result }) {
-    const { asset, priceFeed, decimals, borrowCollateralFactor, liquidateCollateralFactor, liquidationFactor, supplyCap } = result;
-
+  build({ options, cfg }) {
+    const { asset, priceFeed, decimals, borrowCollateralFactor, liquidateCollateralFactor, liquidationFactor, supplyCap } = cfg;
+    console.log('cfg: ', cfg);
     const response: CodeArtifact = {
       code: {
         fn: [
