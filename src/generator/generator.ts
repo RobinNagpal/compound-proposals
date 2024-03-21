@@ -1,85 +1,70 @@
 import fs from 'fs';
 import path from 'path';
-// import {generateContractName, generateFolderName} from './common';
-// import {proposalTemplate} from './templates/proposal.template';
+import { generateContractName, generateFolderName } from './common';
+import { proposalTemplate } from './templates/proposal.template';
 // import {testTemplate} from './templates/test.template';
 import { confirm } from '@inquirer/prompts';
-// import {ConfigFile, Options, PoolConfigs, PoolIdentifier} from './types';
+import { ConfigFile, Options, FeatureConfigs } from './types';
 import prettier from 'prettier';
-import { Options } from './types';
-import { generateContractName, generateFolderName } from './common';
-// import {generateScript} from './templates/script.template';
-// import {generateAIP} from './templates/aip.template';
+import { generateScript } from './templates/script.template';
+import { generateCIP } from './templates/cip.template';
 
-const prettierSolCfg = await prettier.resolveConfig('foo.sol');
-const prettierMDCfg = await prettier.resolveConfig('foo.md');
-const prettierTsCfg = await prettier.resolveConfig('foo.ts');
-
-type Files = {
+interface Files {
   jsonConfig: string;
   script: string;
-  aip: string;
+  cip: string;
   payloads: { payload: string; test: string; contractName: string }[];
-};
+}
 
-/**
- * Generates all the file contents for aip/tests/payloads & script
- * @param options
- * @param poolConfigs
- * @returns
- */
-export async function generateFiles(options: Options): Promise<Files> {
+export async function generateFiles(options: Options, featureConfigs: FeatureConfigs): Promise<Files> {
+  const prettierSolCfg = await prettier.resolveConfig('foo.sol');
+  const prettierMDCfg = await prettier.resolveConfig('foo.md');
+  const prettierTsCfg = await prettier.resolveConfig('foo.ts');
+
   const jsonConfig = await prettier.format(
-    `import {ConfigFile} from '../../generator/types';
-    export const config: ConfigFile`,
+    `import { ConfigFile } from './types';
+    export const config: ConfigFile = ${JSON.stringify({
+      rootOptions: options,
+      featureOptions: featureConfigs,
+    } as ConfigFile)}`,
     { ...prettierTsCfg, filepath: 'foo.ts' },
   );
 
-  //   function createPayloadAndTest(options: Options, pool: PoolIdentifier) {
-  //     const contractName = generateContractName(options, pool);
-  //     const testCode = testTemplate(options, poolConfigs[pool]!, pool);
-  //     return {
-  //       payload: prettier.format(proposalTemplate(options, poolConfigs[pool]!, pool), {
-  //         ...prettierSolCfg,
-  //         filepath: 'foo.sol',
-  //       }),
-  //       test: prettier.format(testCode, {
-  //         ...prettierSolCfg,
-  //         filepath: 'foo.sol',
-  //       }),
-  //       contractName: contractName,
-  //     };
-  //   }
+  const payloadPromises = Object.keys(featureConfigs).map(async (featureKey) => {
+    const contractName = generateContractName(options, featureKey);
+    const featureConfig = featureConfigs[featureKey]!;
+    // const payload = await prettier.format(proposalTemplate(options, featureConfig, featureKey), {
+    //   ...prettierSolCfg,
+    //   filepath: `${contractName}.sol`,
+    //   parser: 'solidity',
+    // });
+    const payload = proposalTemplate(options, featureConfig, featureKey);
+    const test = ''; // Placeholder for test code, adjust as needed
 
-  //   console.log('generating script');
-  //   const script = prettier.format(generateScript(options), {
-  //     ...prettierSolCfg,
-  //     filepath: 'foo.sol',
-  //   });
-  //   console.log('generating aip');
-  //   const aip = prettier.format(generateAIP(options, poolConfigs), {
-  //     ...prettierMDCfg,
-  //     filepath: 'foo.md',
-  //   });
-  const script = '';
-  const aip = '';
+    return { payload, test, contractName };
+  });
+  const payloads = await Promise.all(payloadPromises);
+  console.log('generating script');
+  // const script = prettier.format(scriptTemplate(options, featureConfigs), { ...prettierSolCfg, filepath: 'script.sol' });
+  const script = 'Placeholder for script content';
+  console.log('generating cip');
+  // const cip = 'Placeholder for CIP content';
+  // const cip = prettier.format(generateCIP(options, featureConfigs), { ...prettierMDCfg, filepath: 'cip.md' });
+  const cip = generateCIP(options, featureConfigs);
 
-  return {
-    jsonConfig,
-    script,
-    aip,
-  };
+  return { jsonConfig, script, cip, payloads };
 }
 
-async function askBeforeWrite(options: Options, path: string, content: string) {
-  if (!options.force && fs.existsSync(path)) {
+async function askBeforeWrite(options: Options, filePath: string, content: string): Promise<void> {
+  if (!options.force && fs.existsSync(filePath)) {
     const force = await confirm({
-      message: `A file already exists at ${path} do you want to overwrite`,
+      message: `A file already exists at ${filePath}. Do you want to overwrite it?`,
       default: false,
     });
     if (!force) return;
   }
-  fs.writeFileSync(path, content);
+
+  fs.writeFileSync(filePath, content);
 }
 
 /**
@@ -87,9 +72,10 @@ async function askBeforeWrite(options: Options, path: string, content: string) {
  * @param options
  * @param param1
  */
-export async function writeFiles(options: Options, { jsonConfig, script, aip, payloads }: Files) {
+export async function writeFiles(options: Options, { jsonConfig, script, cip, payloads }: Files): Promise<void> {
   const baseName = generateFolderName(options);
-  const baseFolder = path.join(process.cwd(), 'src', baseName);
+  const baseFolder = path.join(process.cwd(), 'proposals', baseName);
+
   if (fs.existsSync(baseFolder)) {
     if (!options.force && fs.existsSync(baseFolder)) {
       const force = await confirm({
@@ -102,11 +88,9 @@ export async function writeFiles(options: Options, { jsonConfig, script, aip, pa
     fs.mkdirSync(baseFolder, { recursive: true });
   }
 
-  // write config
   await askBeforeWrite(options, path.join(baseFolder, 'config.ts'), jsonConfig);
-  // write aip
-  await askBeforeWrite(options, path.join(baseFolder, `${options.shortName}.md`), aip);
-  // write scripts
+  await askBeforeWrite(options, path.join(baseFolder, `${options.shortName}.md`), cip);
+
   await askBeforeWrite(options, path.join(baseFolder, `${generateContractName(options)}.s.sol`), script);
 
   for (const { payload, test, contractName } of payloads) {
