@@ -3,18 +3,7 @@ import { Command, Option } from 'commander';
 
 import { input, checkbox } from '@inquirer/prompts';
 import { SupportedChains, Options, FeatureModule, FEATURE, CodeArtifact, BaseAssets, ConfigFile, FeatureConfigs } from './types';
-// import { flashBorrower } from './features/flashBorrower';
-// import { capsUpdates } from './features/capsUpdates';
-// import { rateUpdatesV2, rateUpdatesV3 } from './features/rateUpdates';
-// import { collateralsUpdates } from './features/collateralsUpdates';
-// import { borrowsUpdates } from './features/borrowsUpdates';
-// import { eModeUpdates } from './features/eModesUpdates';
-// import { eModeAssets } from './features/eModesAssets';
-// import { priceFeedsUpdates } from './features/priceFeedsUpdates';
 import { addAsset } from './features/addAsset';
-// import { generateFiles, writeFiles } from './generator';
-import { PublicClient } from 'viem';
-// import { CHAIN_ID_CLIENT_MAP } from '@bgd-labs/aave-cli';
 import { getDate, pascalCase } from './common';
 import { generateFiles, writeFiles } from './generator';
 
@@ -74,24 +63,6 @@ async function runCLI() {
   //   }
   // }
   // } else {
-  // options.features = await checkbox({
-  //   message: 'What do you want to do? (can select multiple)',
-  //   choices: FeatureList.map((v) => ({ name: v, value: v })),
-  //   required: true,
-  //   // validate(input) {
-  //   //   // currently ignored due to a bug
-  //   //   if (input.length == 0) return 'You must target at least one chain in your proposal!';
-  //   //   return true;
-  //   // },
-  // });
-
-  // for (const feature of options.features) {
-  // poolConfigs[pool] = {
-  //   configs: {},
-  //   artifacts: [],
-  //   cache: await generateDeterministicPoolCache(pool),
-  // };
-  // const v2 = isV2Pool(pool);
   options.features = await checkbox({
     message: `What do you want to do?`,
     required: true,
@@ -102,28 +73,18 @@ async function runCLI() {
     featureConfigs[feature] = {
       configs: {},
       artifacts: [],
-      cache: await generateDeterministicCache(), // Assumes a function to generate a cache
     };
-    const cliResult = await module.cli({ options });
-    featureConfigs[feature].configs[feature] = await module.cli({
+    featureConfigs[feature]!.configs[feature]! = await module.cli({
       options,
-      cache: featureConfigs[feature].cache,
     });
-    // poolConfigs[pool]!.artifacts.push(
 
-    featureConfigs[feature].artifacts.push(
+    featureConfigs[feature]!.artifacts.push(
       module.build({
         options,
-        cfg: featureConfigs[feature].configs[feature],
-        cache: featureConfigs[feature].cache,
+        cfg: featureConfigs[feature]!.configs[feature],
       }),
     );
-    const buildResult = module.build({
-      result: cliResult,
-    });
-    // );
   }
-  // }
 
   if (!options.title) {
     options.title = await input({
@@ -159,16 +120,15 @@ async function runCLI() {
       message: 'Link to snapshot',
     });
   }
+  try {
+    const files = await generateFiles(options, featureConfigs);
+    await writeFiles(options, files);
+  } catch (e) {
+    console.log('Error: ', e);
+    throw e;
+  }
 }
 
 runCLI().catch((error) => {
   console.error('An error occurred:', error);
 });
-
-try {
-  const files = await generateFiles(options);
-  await writeFiles(options, files);
-} catch (e) {
-  // console.log(JSON.stringify({ options, poolConfigs }, null, 2));
-  throw e;
-}
