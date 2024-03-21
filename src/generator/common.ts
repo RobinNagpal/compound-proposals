@@ -56,8 +56,7 @@ export function getDate() {
  * @returns
  */
 export function generateFolderName(options: Options) {
-  // return `${options.date}_${options.pools.length === 1 ? options.pools[0] : 'Multi'}_${options.shortName}`;
-  return `${options.date}_${options.shortName}`;
+  return `${options.date}_${options.features.length === 1 ? options.features[0] : 'Multi'}_${options.shortName}`;
 }
 
 /**
@@ -66,15 +65,14 @@ export function generateFolderName(options: Options) {
  * @param {*} chain
  * @returns
  */
-export function generateContractName(options: Options) {
-  // let name = pool ? `${pool}_` : '';
-  let name = '';
+export function generateContractName(options: Options, featureKey?: string) {
+  let name = featureKey ? `${featureKey}_` : '';
   name += `${options.shortName}`;
   name += `_${options.date}`;
   return name;
 }
 
-export function getChainAlias(chain) {
+export function getChainAlias(chain: string) {
   return chain === 'Ethereum' ? 'mainnet' : chain.toLowerCase();
 }
 
