@@ -1,20 +1,25 @@
-export const SupportedChains = [
-  'Mainnet',
-  'Polygon',
-  'Arbitrum',
-  'Base'
-];
+export const SupportedChains = ['Mainnet', 'Polygon', 'Arbitrum', 'Base'];
 
-export const BaseAssets = [
-  'USDC',
-  'USDT',
-  'WETH'
-];
+export const BaseAssets = ['USDC', 'USDT', 'WETH'];
 
-type SupportedChain = typeof SupportedChains[number];
-type BaseAsset = typeof BaseAssets[number];
+export type SupportedChain = (typeof SupportedChains)[number];
+export type BaseAsset = (typeof BaseAssets)[number];
 
-export  interface Market  {
+export enum FEATURE {
+  ADD_ASSET = 'ADD_ASSET',
+  OTHERS = 'OTHERS',
+}
+
+export type FeatureConfigs = Partial<Record<string, FeatureConfig>>;
+
+export type FeatureCache = { blockNumber: number };
+
+export interface FeatureConfig {
+  artifacts: CodeArtifact[];
+  configs: { [key: string]: any };
+}
+
+export interface Market {
   chain: SupportedChain;
   baseAsset: BaseAsset;
 }
@@ -22,6 +27,7 @@ export interface Options {
   force?: boolean;
   market: Market;
   title: string;
+  features: string[];
   // automatically generated shortName from title
   shortName: string;
   author: string;
@@ -34,48 +40,47 @@ export interface Options {
 export interface AssetConfig {
   asset: string;
   priceFeed: string;
-  decimals: number;
-  borrowCollateralFactor: number;
-  liquidateCollateralFactor: number;
-  liquidationFactor: number;
-  supplyCap: number;
+  decimals: string;
+  borrowCollateralFactor: string;
+  liquidateCollateralFactor: string;
+  liquidationFactor: string;
+  supplyCap: string;
 }
 export interface MarketInfo {
-  governor: string,
-  pauseGuardian: string,
-  baseToken: BaseAsset,
-  baseTokenPriceFeed: string,
-  extensionDelegate: string,
-  supplyKink: number,
-  supplyPerYearInterestRateSlopeLow: number,
-  supplyPerYearInterestRateSlopeHigh: number,
-  supplyPerYearInterestRateBase: number,
-  borrowKink: number,
-  borrowPerYearInterestRateSlopeLow: number,
-  borrowPerYearInterestRateSlopeHigh: number,
-  borrowPerYearInterestRateBase: number,
-  storeFrontPriceFactor: number,
-  trackingIndexScale: number,
-  baseTrackingSupplySpeed: number,
-  baseTrackingBorrowSpeed: number,
-  baseMinForRewards: number,
-  baseBorrowMin: number,
-  targetReserves: number,
-  assetConfigs: AssetConfig[]
+  governor: string;
+  pauseGuardian: string;
+  baseToken: BaseAsset;
+  baseTokenPriceFeed: string;
+  extensionDelegate: string;
+  supplyKink: string;
+  supplyPerYearInterestRateSlopeLow: string;
+  supplyPerYearInterestRateSlopeHigh: string;
+  supplyPerYearInterestRateBase: string;
+  borrowKink: string;
+  borrowPerYearInterestRateSlopeLow: string;
+  borrowPerYearInterestRateSlopeHigh: string;
+  borrowPerYearInterestRateBase: string;
+  storeFrontPriceFactor: string;
+  trackingIndexScale: string;
+  baseTrackingSupplySpeed: string;
+  baseTrackingBorrowSpeed: string;
+  baseMinForRewards: string;
+  baseBorrowMin: string;
+  targetReserves: string;
+  assetConfigs: AssetConfig[];
 }
 
 export const AllMarkets: Market[] = [
-  {chain: 'Mainnet', baseAsset: 'USDC'},
-  {chain: 'Mainnet', baseAsset: 'USDT'},
-  {chain: 'Mainnet', baseAsset: 'WETH'},
-  {chain: 'Polygon', baseAsset: 'USDC'},
-]
+  { chain: 'Mainnet', baseAsset: 'USDC' },
+  { chain: 'Mainnet', baseAsset: 'USDT' },
+  { chain: 'Mainnet', baseAsset: 'WETH' },
+  { chain: 'Polygon', baseAsset: 'USDC' },
+];
 
-export enum FEATURE {
-  ADD_ASSET = 'ADD_ASSET',
-  OTHERS = 'OTHERS',
-}
-
+export type ConfigFile = {
+  rootOptions: Options;
+  featureOptions: Record<string, FeatureConfig>;
+};
 
 export type CodeArtifact = {
   code?: {
@@ -91,10 +96,9 @@ export type CodeArtifact = {
   };
 };
 
-
 export interface FeatureModule<T extends {} = {}> {
   description: string;
   value: FEATURE;
-  cli: (args: { options: Options; market: SupportedChain; }) => Promise<T>;
-  build: (args: { options: Options; market: SupportedChain; }) => CodeArtifact;
+  cli: (args: { options: Options }) => Promise<T>;
+  build: (args: { options: Options; cfg: T }) => CodeArtifact;
 }
