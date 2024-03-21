@@ -1,43 +1,43 @@
-import { generateContractName, getVersion } from '../common';
-import { FEATURE, Options, PoolConfig, PoolIdentifier } from '../types';
+import { generateContractName } from '../common';
+import { FEATURE, Options, FeatureConfig } from '../types';
 import { prefixWithImports } from '../utils/importsResolver';
 import { prefixWithPragma } from '../utils/constants';
 
-export const proposalTemplate = (options: Options, poolConfig: PoolConfig, pool: PoolIdentifier) => {
+export const proposalTemplate = (options: Options, featureConfig: FeatureConfig, featureKey: string) => {
   const { title, author, snapshot, discussion } = options;
-  const poolName = pool.match(/AaveV[2|3](.*)/)![1];
-  const version = getVersion(pool);
-  const contractName = generateContractName(options, pool);
+  const contractName = generateContractName(options, featureKey);
+  // const poolName = pool.match(/AaveV[2|3](.*)/)![1];
+  // const version = getVersion(pool);
 
-  const constants = poolConfig.artifacts
+  const constants = featureConfig.artifacts
     .map((artifact) => artifact.code?.constants)
     .flat()
     .filter((f) => f !== undefined)
     .join('\n');
-  const functions = poolConfig.artifacts
+  const functions = featureConfig.artifacts
     .map((artifact) => artifact.code?.fn)
     .flat()
     .filter((f) => f !== undefined)
     .join('\n');
-  const innerExecute = poolConfig.artifacts
+  const innerExecute = featureConfig.artifacts
     .map((artifact) => artifact.code?.execute)
     .flat()
     .filter((f) => f !== undefined)
     .join('\n');
 
   let optionalExecute = '';
-  const usesConfigEngine = Object.keys(poolConfig.configs).some((f) => ![FEATURE.OTHERS, FEATURE.FLASH_BORROWER, FEATURE.FREEZE].includes(f));
-  const isAssetListing = Object.keys(poolConfig.configs).some((f) => [FEATURE.ASSET_LISTING, FEATURE.ASSET_LISTING_CUSTOM].includes(f));
+  // const usesConfigEngine = Object.keys(featureConfig.configs).some((f) => ![FEATURE.OTHERS, ].includes(f));
+  const isAssetListing = Object.keys(featureConfig.configs).some((f) => [FEATURE.ADD_ASSET].includes(f as FEATURE));
   if (innerExecute) {
-    if (usesConfigEngine) {
-      optionalExecute = `function _postExecute() internal override {
+    // if (usesConfigEngine) {
+    //   optionalExecute = `function _postExecute() internal override {
+    //     ${innerExecute}
+    //    }`;
+    // } else {
+    optionalExecute = `function execute() external {
         ${innerExecute}
        }`;
-    } else {
-      optionalExecute = `function execute() external {
-        ${innerExecute}
-       }`;
-    }
+    // }
   }
 
   const contract = `/**
@@ -46,7 +46,7 @@ export const proposalTemplate = (options: Options, poolConfig: PoolConfig, pool:
   * - Snapshot: ${snapshot || 'TODO'}
   * - Discussion: ${discussion || 'TODO'}
   */
- contract ${contractName} is ${usesConfigEngine ? `Aave${version}Payload${poolName}` : 'IProposalGenericExecutor'} {
+ contract ${contractName} is IProposalGenericExecutor {
    ${isAssetListing ? 'using SafeERC20 for IERC20;' : ''}
 
    ${constants}
