@@ -4,10 +4,10 @@ pragma solidity ^0.8.15;
 import {ICometEngine} from './ICometEngine.sol';
 
 abstract contract CometProposalPayload {
-    /// @dev to be overridden on the child if any extra logic is needed pre-listing
+    /// @dev to be overridden on the child if any extra logic is needed
     function _preExecute() internal virtual {}
 
-    /// @dev to be overridden on the child if any extra logic is needed post-listing
+    /// @dev to be overridden on the child if any extra logic is needed
     function _postExecute() internal virtual {}
 
     function execute() external {
@@ -15,18 +15,6 @@ abstract contract CometProposalPayload {
 
         ICometEngine.AssetConfig[] memory listings = newAssets();
         ICometEngine.KinkUpdate[] memory caps = kinkUpdates();
-
-        // if (listings.length != 0) {
-        //   address(CONFIG_ENGINE).functionDelegateCall(
-        //     abi.encodeWithSelector(CONFIG_ENGINE.listAssets.selector, getPoolContext(), listings)
-        //   );
-        // }
-
-        // if (caps.length != 0) {
-        //   address(CONFIG_ENGINE).functionDelegateCall(
-        //     abi.encodeWithSelector(CONFIG_ENGINE.updateCaps.selector, caps)
-        //   );
-        // }
 
         _postExecute();
     }
