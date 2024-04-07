@@ -7,9 +7,6 @@ export const testTemplate = (options: Options, featureConfig: FeatureConfig, fea
   //   const chain = getPoolChain(pool);
   const contractName = generateContractName(options, featureKey);
 
-  //   const testBase = isV2Pool(pool) ? 'ProtocolV2TestBase' : 'ProtocolV3TestBase';
-  const testBase = 'ProtocolV3TestBase';
-
   const functions = featureConfig.artifacts
     .map((artifact) => artifact.test?.fn)
     .flat()
@@ -17,15 +14,20 @@ export const testTemplate = (options: Options, featureConfig: FeatureConfig, fea
     .join('\n');
 
   let template = `
-import 'forge-std/Test.sol';
-import {${testBase}, ReserveConfig} from 'aave-helpers/${testBase}.sol';
-import {${contractName}} from './${contractName}.sol';
+  import {${contractName}} from './${contractName}.sol';
+  import {CommonTestBase} from 'src/contracts/CommonTestBase.sol';
+  import {IConfigurator} from 'src/contracts/IConfigurator.sol';
+  import {VmSafe} from 'forge-std/Vm.sol';
+  import 'forge-std/console.sol';
+  import 'forge-std/Test.sol';
+
+
 
 /**
  * @dev Test for ${contractName}
  * command: make test-contract filter=${contractName}
  */
-contract ${contractName}_Test is ${testBase} {
+contract ${contractName}_Test is CommonTestBase {
   ${contractName} internal proposal;
 
   function setUp() public {
@@ -35,5 +37,5 @@ contract ${contractName}_Test is ${testBase} {
 
   ${functions}
 }`;
-  return prefixWithPragma(prefixWithImports(template));
+  return prefixWithPragma(template);
 };
