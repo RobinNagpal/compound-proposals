@@ -26,7 +26,6 @@ export const proposalTemplate = (options: Options, featureConfig: FeatureConfig,
     .join('\n');
 
   let optionalExecute = '';
-  // const usesConfigEngine = Object.keys(featureConfig.configs).some((f) => ![FEATURE.OTHERS, ].includes(f));
   const isAssetListing = Object.keys(featureConfig.configs).some((f) => [FEATURE.ADD_ASSET].includes(f as FEATURE));
   if (innerExecute) {
     // if (usesConfigEngine) {
@@ -46,12 +45,7 @@ export const proposalTemplate = (options: Options, featureConfig: FeatureConfig,
   * - Snapshot: ${snapshot || 'TODO'}
   * - Discussion: ${discussion || 'TODO'}
   */
- contract ${contractName} is IProposalGenericExecutor {
-   ${isAssetListing ? 'using SafeERC20 for IERC20;' : ''}
-
-   ${constants}
-
-   ${optionalExecute}
+ contract ${contractName} {
 
    ${functions}
  }`;
