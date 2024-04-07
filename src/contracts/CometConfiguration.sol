@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity ^0.8.15;
 
 /**
  * @title Compound's Comet Configuration Interface
@@ -17,7 +17,6 @@ contract CometConfiguration {
         address baseToken;
         address baseTokenPriceFeed;
         address extensionDelegate;
-
         uint64 supplyKink;
         uint64 supplyPerYearInterestRateSlopeLow;
         uint64 supplyPerYearInterestRateSlopeHigh;
@@ -33,7 +32,6 @@ contract CometConfiguration {
         uint104 baseMinForRewards;
         uint104 baseBorrowMin;
         uint104 targetReserves;
-
         AssetConfig[] assetConfigs;
     }
 
@@ -41,6 +39,17 @@ contract CometConfiguration {
         address asset;
         address priceFeed;
         uint8 decimals;
+        uint64 borrowCollateralFactor;
+        uint64 liquidateCollateralFactor;
+        uint64 liquidationFactor;
+        uint128 supplyCap;
+    }
+
+    struct AssetInfo {
+        uint8 offset;
+        address asset;
+        address priceFeed;
+        uint64 scale;
         uint64 borrowCollateralFactor;
         uint64 liquidateCollateralFactor;
         uint64 liquidationFactor;
