@@ -4,11 +4,12 @@ import { stringPrompt } from '../prompts/stringPrompt';
 import { numberPrompt } from '../prompts/numberPrompt';
 import { addressPrompt } from '../prompts/addressPrompt';
 import { percentPrompt } from '../prompts/percentPrompt';
+import { Addresses } from '../utils/constants';
 
 async function fetchAssetConfig(required?: boolean): Promise<AssetConfig> {
   return {
-    asset: await stringPrompt({
-      message: 'Enter the asset name:',
+    asset: await addressPrompt({
+      message: 'Enter the asset address:',
       required: true,
     }),
     priceFeed: await addressPrompt({
@@ -86,17 +87,50 @@ export const addAsset: FeatureModule<AssetConfig> = {
     const response: CodeArtifact = {
       code: {
         fn: [
-          `function addAsset() public pure override returns (MarketInfo memory) {
-            MarketInfo memory assetConfig;
-            assetConfig.asset: "${asset}",
-            assetConfig.priceFeed: "${priceFeed}",
-            assetConfig.decimals: ${decimals},
-            assetConfig.borrowCollateralFactor: ${borrowCollateralFactor},
-            assetConfig.liquidateCollateralFactor: ${liquidateCollateralFactor},
-            assetConfig.liquidationFactor: ${liquidationFactor},
-            assetConfig.supplyCap: ${supplyCap}
-            return assetConfig;
+          `function executeAddAsset() external {
+            IConfigurator configurator = IConfigurator(${Addresses.configuratorAddress}); 
+            ICometProxyAdmin cometProxyAdmin = ICometProxyAdmin(${Addresses.cometProxyAdminAddress}); 
+
+            Structs.AssetConfig memory assetConfig = Structs.AssetConfig({
+                asset: ${asset},
+                priceFeed: ${priceFeed},
+                decimals: ${decimals},
+                borrowCollateralFactor: ${borrowCollateralFactor},
+                liquidateCollateralFactor: ${liquidateCollateralFactor},
+                liquidationFactor: ${liquidationFactor},
+                supplyCap: ${supplyCap}
+            });
+            
+            configurator.addAsset(${Addresses.cometProxyAddress}, assetConfig);
+            
+            cometProxyAdmin.deployAndUpgradeTo(${Addresses.configuratorAddress}, ${Addresses.cometProxyAddress});
           }`,
+        ],
+      },
+      test: {
+        fn: [
+          `function isAssetListed() internal returns (bool) {
+            try configurator.getAssetIndex(${Addresses.cometProxyAddress}, ${asset}) returns (uint256 assetIndex) {
+                return true;
+            } catch (bytes memory lowLevelData) {
+                emit log('Check isAssetListed execution failed with low-level data: ');
+                emit log_bytes(lowLevelData); // This will print the revert reason if available
+            }
+            return false;
+        }
+        
+        function testAddAsset() {
+            if(!isAssetListed()){
+                emit log('Asset is listed');
+            return
+            }
+            else {
+                emit log('Asset is not listed');
+            }
+            executeAddAsset();
+            
+            console.log(isAssetListed() ? 'Asset is listed' : 'Asset is not listed');
+              `,
         ],
       },
     };
