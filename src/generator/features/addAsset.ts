@@ -109,28 +109,29 @@ export const addAsset: FeatureModule<AssetConfig> = {
       },
       test: {
         fn: [
-          `function isAssetListed() internal returns (bool) {
-            try configurator.getAssetIndex(${Addresses.cometProxyAddress}, ${asset}) returns (uint256 assetIndex) {
+          `
+          function isAssetListed() internal returns (bool) {
+            IConfigurator configurator = IConfigurator(address(${Addresses.configuratorAddress})); 
+            try configurator.getAssetIndex(address(${Addresses.cometProxyAddress}), address(${asset})) returns (uint256 assetIndex) {
                 return true;
             } catch (bytes memory lowLevelData) {
-                emit log('Check isAssetListed execution failed with low-level data: ');
-                emit log_bytes(lowLevelData); // This will print the revert reason if available
-            }
-            return false;
-        }
-        
-        function testAddAsset() {
-            if(!isAssetListed()){
-                emit log('Asset is listed');
-            return
-            }
-            else {
                 emit log('Asset is not listed');
             }
-            executeAddAsset();
-            
-            console.log(isAssetListed() ? 'Asset is listed' : 'Asset is not listed');
-              `,
+            return false;
+          }`,
+
+          `function testAddAsset() public {
+      
+              require(!isAssetListed(), 'Asset should not be listed before execution.');
+      
+              vm.startPrank(address(${Addresses.governorAddress}));
+              try proposal.executeAddAsset() {
+                  require(isAssetListed(), 'Asset should be listed after execution.');
+                  emit log('AddAsset executed successfully, and asset is now listed.');
+              } catch {
+                  emit log('AddAsset execution failed.');
+              }
+          }`,
         ],
       },
     };
