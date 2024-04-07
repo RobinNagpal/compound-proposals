@@ -77,7 +77,7 @@ async function askBeforeWrite(options: Options, filePath: string, content: strin
  */
 export async function writeFiles(options: Options, { jsonConfig, script, cip, payloads }: Files): Promise<void> {
   const baseName = generateFolderName(options);
-  const baseFolder = path.join(process.cwd(), 'proposals', baseName);
+  const baseFolder = path.join(process.cwd(), 'src/proposals', baseName);
 
   if (fs.existsSync(baseFolder)) {
     if (!options.force && fs.existsSync(baseFolder)) {
