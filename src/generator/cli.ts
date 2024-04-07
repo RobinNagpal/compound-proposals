@@ -38,7 +38,7 @@ async function runCLI() {
     },
   };
 
-  const FEATURES = [addAsset, PLACEHOLDER_MODULE];
+  const FEATURES = [addAsset];
   // if (!options.configFile) {
   // const {config: cfgFile}: {config: ConfigFile} = await import(
   //   path.join(process.cwd(), options.configFile)
