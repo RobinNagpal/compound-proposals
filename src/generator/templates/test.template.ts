@@ -4,10 +4,10 @@ import { prefixWithPragma } from '../utils/constants';
 import { prefixWithImports } from '../utils/importsResolver';
 
 export const testTemplate = (options: Options, featureConfig: FeatureConfig, featureKey: string) => {
-//   const chain = getPoolChain(pool);
+  //   const chain = getPoolChain(pool);
   const contractName = generateContractName(options, featureKey);
 
-//   const testBase = isV2Pool(pool) ? 'ProtocolV2TestBase' : 'ProtocolV3TestBase';
+  //   const testBase = isV2Pool(pool) ? 'ProtocolV2TestBase' : 'ProtocolV3TestBase';
   const testBase = 'ProtocolV3TestBase';
 
   const functions = featureConfig.artifacts
@@ -29,15 +29,8 @@ contract ${contractName}_Test is ${testBase} {
   ${contractName} internal proposal;
 
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('${getChainAlias(chain)}'), ${poolConfig.cache.blockNumber});
+    vm.createSelectFork(vm.rpcUrl('mainnet'), 18544451);
     proposal = new ${contractName}();
-  }
-
-  /**
-   * @dev executes the generic test suite including e2e and config snapshots
-   */
-  function test_defaultProposalExecution() public {
-    defaultTest('${contractName}', ${pool}.POOL, address(proposal));
   }
 
   ${functions}

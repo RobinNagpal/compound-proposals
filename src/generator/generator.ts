@@ -8,6 +8,7 @@ import { ConfigFile, Options, FeatureConfigs } from './types';
 import prettier from 'prettier';
 import { generateScript } from './templates/script.template';
 import { generateCIP } from './templates/cip.template';
+import { testTemplate } from './templates/test.template';
 
 interface Files {
   jsonConfig: string;
@@ -39,7 +40,9 @@ export async function generateFiles(options: Options, featureConfigs: FeatureCon
     //   parser: 'solidity',
     // });
     const payload = proposalTemplate(options, featureConfig, featureKey);
-    const test = ''; // Placeholder for test code, adjust as needed
+    // const testCode = testTemplate(options, poolConfigs[pool]!, pool);
+
+    const test = testTemplate(options, featureConfig, featureKey); // Placeholder for test code, adjust as needed
 
     return { payload, test, contractName };
   });

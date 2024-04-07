@@ -28,6 +28,7 @@ package-lock.json
 broadcast/
 
 reports/
+proposals/
 
 # tooling download folder
 etherscan
