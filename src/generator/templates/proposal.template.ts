@@ -1,7 +1,7 @@
 import { generateContractName } from '../common';
-import { FEATURE, Options, FeatureConfig } from '../types';
-import { prefixWithImports } from '../utils/importsResolver';
+import { FeatureConfig, Options } from '../types';
 import { prefixWithPragma } from '../utils/constants';
+import { prefixWithImports } from '../utils/importsResolver';
 
 export const proposalTemplate = (options: Options, featureConfig: FeatureConfig, featureKey: string) => {
   const { title, author, snapshot, discussion } = options;

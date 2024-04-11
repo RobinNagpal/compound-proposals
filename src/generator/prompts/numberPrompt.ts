@@ -12,7 +12,7 @@ export function transformNumberToHumanReadable(value: string) {
   return value;
 }
 
-export async function numberPrompt({ message, required }: GenericPrompt, opts?) {
+export async function numberPrompt({ message, required, defaultValue }: GenericPrompt, opts?: object) {
   return await advancedInput(
     {
       message,
@@ -23,6 +23,7 @@ export async function numberPrompt({ message, required }: GenericPrompt, opts?) 
       },
       pattern: /^[0-9]*$/,
       patternError: 'Only full numbers are allowed',
+      default: defaultValue,
     },
     opts,
   );

@@ -1,32 +1,18 @@
-import path from 'path';
-import { Command, Option } from 'commander';
-
-import { input, checkbox } from '@inquirer/prompts';
-import { SupportedChains, Options, FeatureModule, FEATURE, CodeArtifact, BaseAssets, ConfigFile, FeatureConfigs } from './types';
-import { addAsset } from './features/addAsset';
+import { checkbox, input } from '@inquirer/prompts';
+import { Command } from 'commander';
 import { getDate, pascalCase } from './common';
 import { generateFiles, writeFiles } from './generator';
+import { addAsset } from './proposalTypes/addAsset';
+import { CodeArtifact, FeatureModule, Options, ProposalTypes } from './types';
 
 async function runCLI() {
   const program = new Command();
 
-  program
-    .name('proposal-generator')
-    .description('CLI to generate Compound proposals')
-    .version('1.0.0')
-    .addOption(new Option('-p, --market <markets...>').choices(SupportedChains))
-    .addOption(new Option('-t, --title <string>', 'proposal title'))
-    .addOption(new Option('-a, --author <string>', 'author'))
-    .addOption(new Option('-d, --discussion <string>', 'forum link'))
-    .allowExcessArguments(false)
-    .parse(process.argv);
-
-  let options = program.opts<Options>();
-  let featureConfigs: FeatureConfigs = {};
+  const options = program.opts<Options>();
 
   const PLACEHOLDER_MODULE: FeatureModule<{}> = {
     description: 'Something different not supported by configEngine',
-    value: FEATURE.OTHERS,
+    value: ProposalTypes.OTHERS,
     cli: async ({}) => {
       return {};
     },
@@ -38,53 +24,26 @@ async function runCLI() {
     },
   };
 
-  const FEATURES = [addAsset];
-  // if (!options.configFile) {
-  // const {config: cfgFile}: {config: ConfigFile} = await import(
-  //   path.join(process.cwd(), options.configFile)
-  // );
-  // options = {...options, ...cfgFile.rootOptions};
-  // poolConfigs = cfgFile.poolOptions as any;
-  // for (const pool of options.pools) {
-  //   const v2 = isV2Pool(pool);
-  //   poolConfigs[pool]!.artifacts = [];
-  //   for (const feature of Object.keys(poolConfigs[pool]!.configs)) {
-  //     const module = v2
-  //       ? FEATURE_MODULES_V2.find((m) => m.value === feature)!
-  //       : FEATURE_MODULES_V3.find((m) => m.value === feature)!;
-  //     poolConfigs[pool]!.artifacts.push(
-  //       module.build({
-  //         options,
-  //         pool,
-  //         cfg: poolConfigs[pool]!.configs[feature],
-  //         cache: poolConfigs[pool]!.cache,
-  //       })
-  //     );
-  //   }
-  // }
-  // } else {
+  const TypeOfCompoundProposals = [addAsset, PLACEHOLDER_MODULE];
+
   options.features = await checkbox({
     message: `What do you want to do?`,
     required: true,
-    choices: FEATURES.map((m) => ({ value: m.value, name: m.description })),
+    choices: TypeOfCompoundProposals.map((m) => ({ value: m.value, name: m.description })),
   });
-  for (const feature of options.features) {
-    const module = FEATURES.find((m) => m.value === feature)!;
-    featureConfigs[feature] = {
-      configs: {},
-      artifacts: [],
-    };
-    featureConfigs[feature]!.configs[feature]! = await module.cli({
-      options,
-    });
 
-    featureConfigs[feature]!.artifacts.push(
-      module.build({
-        options,
-        cfg: featureConfigs[feature]!.configs[feature],
-      }),
-    );
-  }
+  const feature = options.features?.[0];
+
+  const selectedProposalType: FeatureModule<any> = TypeOfCompoundProposals.find((m) => m.value === feature)!;
+
+  const selectedProposalConfig = await selectedProposalType.cli({
+    options,
+  });
+
+  const codeArtifact = selectedProposalType.build({
+    options,
+    cfg: selectedProposalConfig,
+  });
 
   if (!options.title) {
     options.title = await input({
@@ -115,13 +74,13 @@ async function runCLI() {
     });
   }
 
-  if (!options.snapshot) {
-    options.snapshot = await input({
-      message: 'Link to snapshot',
-    });
-  }
   try {
-    const files = await generateFiles(options, featureConfigs);
+    const files = await generateFiles(options, {
+      [feature]: {
+        configs: selectedProposalConfig,
+        artifacts: [codeArtifact],
+      },
+    });
     await writeFiles(options, files);
   } catch (e) {
     console.log('Error: ', e);

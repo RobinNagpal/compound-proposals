@@ -1,4 +1,16 @@
-import { AllMarkets, AssetConfig, BaseAssets, CodeArtifact, FEATURE, FeatureModule, Market, MarketInfo, SupportedChain, SupportedChains } from '../types';
+import {
+  AllMarkets,
+  AssetConfig,
+  BaseAssets,
+  CodeArtifact,
+  ProposalTypes,
+  FeatureModule,
+  Market,
+  MarketInfo,
+  SupportedChain,
+  SupportedChains,
+  MarketAndAssetConfig,
+} from '../types';
 import { select } from '@inquirer/prompts';
 import { stringPrompt } from '../prompts/stringPrompt';
 import { numberPrompt } from '../prompts/numberPrompt';
@@ -11,30 +23,37 @@ async function fetchAssetConfig(required?: boolean): Promise<AssetConfig> {
     asset: await addressPrompt({
       message: 'Enter the asset address:',
       required: true,
+      defaultValue: '0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1',
     }),
     priceFeed: await addressPrompt({
       message: 'Enter the price feed address:',
       required: true,
+      defaultValue: '0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6',
     }),
     decimals: await stringPrompt({
       message: 'Enter the decimals:',
       required: true,
+      defaultValue: '18',
     }),
     borrowCollateralFactor: await percentPrompt({
       message: 'Enter the borrow collateral factor:',
       required: true,
+      defaultValue: '65',
     }),
     liquidateCollateralFactor: await percentPrompt({
       message: 'Enter the liquidate collateral factor:',
       required: true,
+      defaultValue: '70',
     }),
     liquidationFactor: await percentPrompt({
       message: 'Enter the liquidation factor:',
       required: true,
+      defaultValue: '80',
     }),
     supplyCap: await numberPrompt({
       message: 'Enter the supply cap:',
       required: true,
+      defaultValue: '500000',
     }),
   };
 }
@@ -72,17 +91,17 @@ async function fetchMarketInfo(): Promise<Market> {
   return marketInfo;
 }
 
-export const addAsset: FeatureModule<AssetConfig> = {
-  value: FEATURE.ADD_ASSET,
+export const addAsset: FeatureModule<MarketAndAssetConfig> = {
+  value: ProposalTypes.ADD_ASSET,
   description: 'Add asset',
-  async cli({ options }) {
+  async cli({ options }): Promise<MarketAndAssetConfig> {
     const marketInfo = await fetchMarketInfo();
     const asset = await fetchAssetConfig();
 
-    return asset;
+    return { asset, market: marketInfo };
   },
   build({ options, cfg }) {
-    const { asset, priceFeed, decimals, borrowCollateralFactor, liquidateCollateralFactor, liquidationFactor, supplyCap } = cfg;
+    const { asset, priceFeed, decimals, borrowCollateralFactor, liquidateCollateralFactor, liquidationFactor, supplyCap } = cfg.asset;
     console.log('cfg: ', cfg);
     const response: CodeArtifact = {
       code: {

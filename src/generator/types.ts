@@ -1,11 +1,11 @@
 export const SupportedChains = ['Mainnet', 'Polygon', 'Arbitrum', 'Base'];
 
-export const BaseAssets = ['USDC', 'USDT', 'WETH'];
+export const BaseAssets = ['USDC', 'WETH'];
 
 export type SupportedChain = (typeof SupportedChains)[number];
 export type BaseAsset = (typeof BaseAssets)[number];
 
-export enum FEATURE {
+export enum ProposalTypes {
   ADD_ASSET = 'ADD_ASSET',
   OTHERS = 'OTHERS',
 }
@@ -46,6 +46,12 @@ export interface AssetConfig {
   liquidationFactor: string;
   supplyCap: string;
 }
+
+export interface MarketAndAssetConfig {
+  market: Market;
+  asset: AssetConfig;
+}
+
 export interface MarketInfo {
   governor: string;
   pauseGuardian: string;
@@ -72,7 +78,6 @@ export interface MarketInfo {
 
 export const AllMarkets: Market[] = [
   { chain: 'Mainnet', baseAsset: 'USDC' },
-  { chain: 'Mainnet', baseAsset: 'USDT' },
   { chain: 'Mainnet', baseAsset: 'WETH' },
   { chain: 'Polygon', baseAsset: 'USDC' },
 ];
@@ -98,7 +103,7 @@ export type CodeArtifact = {
 
 export interface FeatureModule<T extends {} = {}> {
   description: string;
-  value: FEATURE;
+  value: ProposalTypes;
   cli: (args: { options: Options }) => Promise<T>;
   build: (args: { options: Options; cfg: T }) => CodeArtifact;
 }

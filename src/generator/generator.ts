@@ -6,7 +6,6 @@ import { proposalTemplate } from './templates/proposal.template';
 import { confirm } from '@inquirer/prompts';
 import { ConfigFile, Options, FeatureConfigs } from './types';
 import prettier from 'prettier';
-import { generateScript } from './templates/script.template';
 import { generateCIP } from './templates/cip.template';
 import { testTemplate } from './templates/test.template';
 
