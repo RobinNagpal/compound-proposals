@@ -1,0 +1,34 @@
+node_modules
+.idea
+
+.env
+.env.local
+
+# hardhat
+artifacts/
+cache/
+
+# slither
+crytic-export/
+
+# other
+trace*.json
+tenderly*.json
+*.iml
+
+out/
+
+
+.env.bk
+
+# well, looks strange to ignore package-lock, but we have only pretter and it's temproray
+package-lock.json
+
+# ignore foundry deploy artifacts
+broadcast/
+
+reports/
+proposals/
+
+# tooling download folder
+etherscan
