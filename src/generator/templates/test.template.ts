@@ -1,7 +1,7 @@
-import { generateContractName, getChainAlias } from '../common';
-import { Options, FeatureConfig, ProposalType } from '../types';
-import { prefixWithPragma } from '../utils/constants';
-import { prefixWithImports } from '../utils/importsResolver';
+import {generateContractName, getChainAlias} from '../common';
+import {Options, FeatureConfig, ProposalType} from '../types';
+import {prefixWithPragma} from '../utils/constants';
+import {prefixWithImports} from '../utils/importsResolver';
 
 export const testTemplate = (options: Options, featureConfig: FeatureConfig, proposalType: ProposalType) => {
   //   const chain = getPoolChain(pool);

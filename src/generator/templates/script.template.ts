@@ -1,7 +1,7 @@
-import { generateContractName, generateFolderName } from '../common';
-import { FeatureConfig, FeatureConfigs, Options } from '../types';
-import { prefixWithPragma } from '../utils/constants';
-import { prefixWithImports } from '../utils/importsResolver';
+import {generateContractName, generateFolderName} from '../common';
+import {FeatureConfig, FeatureConfigs, Options} from '../types';
+import {prefixWithPragma} from '../utils/constants';
+import {prefixWithImports} from '../utils/importsResolver';
 
 export function generateScript(options: Options, featureConfig: FeatureConfigs) {
   const folderName = generateFolderName(options);

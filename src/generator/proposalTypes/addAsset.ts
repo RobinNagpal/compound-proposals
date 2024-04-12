@@ -11,12 +11,12 @@ import {
   SupportedChains,
   MarketAndAssetConfig,
 } from '../types';
-import { select } from '@inquirer/prompts';
-import { stringPrompt } from '../prompts/stringPrompt';
-import { numberPrompt } from '../prompts/numberPrompt';
-import { addressPrompt } from '../prompts/addressPrompt';
-import { percentPrompt } from '../prompts/percentPrompt';
-import { Addresses } from '../utils/constants';
+import {select} from '@inquirer/prompts';
+import {stringPrompt} from '../prompts/stringPrompt';
+import {numberPrompt} from '../prompts/numberPrompt';
+import {addressPrompt} from '../prompts/addressPrompt';
+import {percentPrompt} from '../prompts/percentPrompt';
+import {Addresses} from '../utils/constants';
 
 async function fetchAssetConfig(required?: boolean): Promise<AssetConfig> {
   return {
@@ -68,7 +68,7 @@ async function selectChain(): Promise<SupportedChain> {
 
   return await select({
     message: 'Which chain to add the asset to?',
-    choices: chainChoices.map((c) => ({ value: c, name: c })),
+    choices: chainChoices.map((c) => ({value: c, name: c})),
   });
 }
 
@@ -76,7 +76,7 @@ async function selectBaseAsset(chain: SupportedChain): Promise<string> {
   const baseAssetChoices = AllMarkets.filter((market) => market.chain === chain).map((market) => market.baseAsset);
   return await select({
     message: 'What is the base asset for the market?',
-    choices: baseAssetChoices.map((a) => ({ value: a, name: a })),
+    choices: baseAssetChoices.map((a) => ({value: a, name: a})),
   });
 }
 
@@ -94,14 +94,14 @@ async function fetchMarketInfo(): Promise<Market> {
 export const addAsset: FeatureModule<MarketAndAssetConfig> = {
   value: ProposalType.AddAsset,
   description: 'Add asset',
-  async cli({ options }): Promise<MarketAndAssetConfig> {
+  async cli({options}): Promise<MarketAndAssetConfig> {
     const marketInfo = await fetchMarketInfo();
     const asset = await fetchAssetConfig();
 
-    return { asset, market: marketInfo };
+    return {asset, market: marketInfo};
   },
-  build({ options, cfg }) {
-    const { asset, priceFeed, decimals, borrowCollateralFactor, liquidateCollateralFactor, liquidationFactor, supplyCap } = cfg.asset;
+  build({options, cfg}) {
+    const {asset, priceFeed, decimals, borrowCollateralFactor, liquidateCollateralFactor, liquidationFactor, supplyCap} = cfg.asset;
     console.log('cfg: ', cfg);
     const response: CodeArtifact = {
       code: {

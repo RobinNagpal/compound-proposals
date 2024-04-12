@@ -1,5 +1,5 @@
-import { generateContractName, generateFolderName } from '../common';
-import { Options, FeatureConfigs } from '../types';
+import {generateContractName, generateFolderName} from '../common';
+import {Options, FeatureConfigs} from '../types';
 
 export function generateCIP(options: Options, configs: FeatureConfigs) {
   return `---

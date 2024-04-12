@@ -1,9 +1,9 @@
-import { checkbox, input } from '@inquirer/prompts';
-import { Command } from 'commander';
-import { getDate, pascalCase } from './common';
-import { generateFiles, writeFiles } from './generator';
-import { addAsset } from './proposalTypes/addAsset';
-import { CodeArtifact, FeatureModule, Options, ProposalType } from './types';
+import {checkbox, input} from '@inquirer/prompts';
+import {Command} from 'commander';
+import {getDate, pascalCase} from './common';
+import {generateFiles, writeFiles} from './generator';
+import {addAsset} from './proposalTypes/addAsset';
+import {CodeArtifact, FeatureModule, Options, ProposalType} from './types';
 
 async function runCLI() {
   const program = new Command();
@@ -18,7 +18,7 @@ async function runCLI() {
     },
     build: ({}) => {
       const response: CodeArtifact = {
-        code: { execute: ['// custom code goes here'] },
+        code: {execute: ['// custom code goes here']},
       };
       return response;
     },
@@ -29,7 +29,7 @@ async function runCLI() {
   options.features = await checkbox({
     message: `What do you want to do?`,
     required: true,
-    choices: TypeOfCompoundProposals.map((m) => ({ value: m.value, name: m.description })),
+    choices: TypeOfCompoundProposals.map((m) => ({value: m.value, name: m.description})),
   });
 
   const feature = options.features?.[0];

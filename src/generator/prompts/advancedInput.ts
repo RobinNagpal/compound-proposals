@@ -1,10 +1,10 @@
-import { createPrompt, useState, useKeypress, usePrefix, isEnterKey, isBackspaceKey, type PromptConfig } from '@inquirer/core';
+import {createPrompt, useState, useKeypress, usePrefix, isEnterKey, isBackspaceKey, type PromptConfig} from '@inquirer/core';
 import type {} from '@inquirer/type';
 import chalk from 'chalk';
 
 export type InputConfig = PromptConfig<{
   default?: string;
-  transformer?: (value: string, { isFinal }: { isFinal: boolean }) => string;
+  transformer?: (value: string, {isFinal}: {isFinal: boolean}) => string;
   validate?: (value: string) => boolean | string | Promise<string | boolean>;
   pattern?: RegExp;
   patternError?: string;
@@ -15,7 +15,7 @@ export type InputConfig = PromptConfig<{
  * The input will simply discard any non conform input and show an error
  */
 export const advancedInput = createPrompt<string, InputConfig>((config, done) => {
-  const { validate = () => true, pattern, patternError } = config;
+  const {validate = () => true, pattern, patternError} = config;
   const [status, setStatus] = useState<string>('pending');
   const [defaultValue = '', setDefaultValue] = useState<string | undefined>(config.default);
   const [errorMsg, setError] = useState<string | undefined>(undefined);
@@ -66,7 +66,7 @@ export const advancedInput = createPrompt<string, InputConfig>((config, done) =>
   const message = chalk.bold(config.message);
   let formattedValue = value;
   if (typeof config.transformer === 'function') {
-    formattedValue = config.transformer(value, { isFinal: status === 'done' });
+    formattedValue = config.transformer(value, {isFinal: status === 'done'});
   }
   if (status === 'done') {
     formattedValue = chalk.cyan(formattedValue);

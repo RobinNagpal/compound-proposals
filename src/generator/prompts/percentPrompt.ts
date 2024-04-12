@@ -1,5 +1,5 @@
-import { advancedInput } from './advancedInput';
-import { GenericPrompt } from './types';
+import {advancedInput} from './advancedInput';
+import {GenericPrompt} from './types';
 
 function isNumber(value: string) {
   return !isNaN(value as unknown as number);
@@ -16,7 +16,7 @@ export function transformNumberToPercent(value: string) {
   return value;
 }
 
-export async function percentPrompt<T extends boolean>({ message, required, defaultValue }: GenericPrompt<T>, opts?: object): Promise<string> {
+export async function percentPrompt<T extends boolean>({message, required, defaultValue}: GenericPrompt<T>, opts?: object): Promise<string> {
   const value = await advancedInput(
     {
       message,

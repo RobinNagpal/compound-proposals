@@ -1,5 +1,5 @@
-import { advancedInput } from './advancedInput';
-import { GenericPrompt } from './types';
+import {advancedInput} from './advancedInput';
+import {GenericPrompt} from './types';
 
 function isNumber(value: string) {
   return !isNaN(value as unknown as number);
@@ -12,7 +12,7 @@ export function transformNumberToHumanReadable(value: string) {
   return value;
 }
 
-export async function numberPrompt({ message, required, defaultValue }: GenericPrompt, opts?: object) {
+export async function numberPrompt({message, required, defaultValue}: GenericPrompt, opts?: object) {
   return await advancedInput(
     {
       message,

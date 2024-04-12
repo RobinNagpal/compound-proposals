@@ -1,10 +1,10 @@
-import { generateContractName } from '../common';
-import { FeatureConfig, Options, ProposalType } from '../types';
-import { prefixWithPragma } from '../utils/constants';
-import { prefixWithImports } from '../utils/importsResolver';
+import {generateContractName} from '../common';
+import {FeatureConfig, Options, ProposalType} from '../types';
+import {prefixWithPragma} from '../utils/constants';
+import {prefixWithImports} from '../utils/importsResolver';
 
 export const proposalTemplate = (options: Options, featureConfig: FeatureConfig, proposalType: ProposalType) => {
-  const { title, author, discussion } = options;
+  const {title, author, discussion} = options;
   const contractName = generateContractName(options, proposalType);
 
   const constants = featureConfig.artifacts

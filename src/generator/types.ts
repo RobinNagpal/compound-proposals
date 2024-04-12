@@ -12,11 +12,11 @@ export enum ProposalType {
 
 export type FeatureConfigs = Partial<Record<ProposalType, FeatureConfig>>;
 
-export type FeatureCache = { blockNumber: number };
+export type FeatureCache = {blockNumber: number};
 
 export interface FeatureConfig {
   artifacts: CodeArtifact[];
-  configs: { [key: string]: any };
+  configs: {[key: string]: any};
 }
 
 export interface Market {
@@ -75,9 +75,9 @@ export interface MarketInfo {
 }
 
 export const AllMarkets: Market[] = [
-  { chain: 'Mainnet', baseAsset: 'USDC' },
-  { chain: 'Mainnet', baseAsset: 'WETH' },
-  { chain: 'Polygon', baseAsset: 'USDC' },
+  {chain: 'Mainnet', baseAsset: 'USDC'},
+  {chain: 'Mainnet', baseAsset: 'WETH'},
+  {chain: 'Polygon', baseAsset: 'USDC'},
 ];
 
 export type ConfigFile = {
@@ -102,6 +102,6 @@ export type CodeArtifact = {
 export interface FeatureModule<T extends {} = {}> {
   description: string;
   value: ProposalType;
-  cli: (args: { options: Options }) => Promise<T>;
-  build: (args: { options: Options; cfg: T }) => CodeArtifact;
+  cli: (args: {options: Options}) => Promise<T>;
+  build: (args: {options: Options; cfg: T}) => CodeArtifact;
 }
