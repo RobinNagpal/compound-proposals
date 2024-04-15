@@ -22,4 +22,11 @@ contract Structs {
     uint64 liquidationFactor;
     uint128 supplyCap;
   }
+
+  struct ProposalInfo {
+    address[] memory targets;
+    uint256[] memory values;
+    string[] memory signatures;
+    bytes[] memory calldatas;
+  }
 }
