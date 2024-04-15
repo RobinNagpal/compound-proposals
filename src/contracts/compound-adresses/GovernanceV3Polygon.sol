@@ -7,11 +7,11 @@ library GovernanceV3Polygon {
 }
 
 library GovernanceV3PolygonAssets {
-    address internal constant WETH_TOKEN = 0x7ceb23fd6bc0add59e62ac25578270cff1b9f619;
+    address internal constant WETH_TOKEN = 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619;
     address internal constant WETH_PRICE_FEED = 0xF9680D99D6C9589e2a93a78A04A279e509205945;
     uint8 internal constant WETH_DECIMALS = 18;
 
-    address internal constant WBTC_TOKEN = 0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6;
+    address internal constant WBTC_TOKEN = 0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6;
     address internal constant WBTC_PRICE_FEED = 0xDE31F8bFBD8c84b5360CFACCa3539B938dd78ae6;
     uint8 internal constant WBTC_DECIMALS = 8;
 

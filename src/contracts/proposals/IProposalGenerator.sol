@@ -26,7 +26,15 @@ interface IProposalGenerator {
     uint64 supplyKink;
   }
 
-  function newAssets() external view returns (NewAssetConfig[] memory);
+  struct ProposalInfo {
+    address[] targets;
+    uint256[] values;
+    string[] signatures;
+    bytes[] calldatas;
+  }
 
-  function interestRateUpdates() external view returns (InterestRateUpdate[] memory);
+
+  function getNewAssetsConfigs() external returns (NewAssetConfig[] memory);
+
+  function getInterestRateUpdates() external returns (InterestRateUpdate[] memory);
 }
