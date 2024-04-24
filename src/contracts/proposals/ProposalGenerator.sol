@@ -2,11 +2,10 @@
 pragma solidity ^0.8.0;
 
 import './../structs.sol';
-import {IProposalGenerator} from "./IProposalGenerator.sol";
-import "./GeneratorConfig.sol";
+import {IProposalGenerator} from './IProposalGenerator.sol';
+import './GeneratorConfig.sol';
 
 abstract contract ProposalGenerator is IProposalGenerator {
-
   GeneratorConfig public GENERATOR_CONFIG;
 
   constructor(GeneratorConfig memory generatorConfig) {
@@ -32,25 +31,15 @@ abstract contract ProposalGenerator is IProposalGenerator {
       proposalInfo.targets[i] = GENERATOR_CONFIG.configuratorProxy;
       proposalInfo.values[i] = 0;
       proposalInfo.signatures[i] = 'addAsset(address,tuple)';
-      proposalInfo.calldatas[i] = abi.encode(
-        GENERATOR_CONFIG.cometProxy,
-        new String[](
-          addAssets[i].asset,
-          addAssets[i].priceFeed,
-          addAssets[i].decimals,
-          addAssets[i].borrowCollateralFactor,
-          addAssets[i].liquidateCollateralFactor,
-          addAssets[i].liquidationFactor,
-          addAssets[i].supplyCap
-        )
-      );
+      proposalInfo.calldatas[i] = abi.encode(GENERATOR_CONFIG.cometProxy, addAssets[i]);
     }
-
 
     for (uint j = 0; j < rateUpdates.length; j++) {
       proposalInfo.targets[i] = GENERATOR_CONFIG.configuratorProxy;
       proposalInfo.values[i] = 0;
-      proposalInfo.signatures[i] = 'updateInterestRates(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)';
+      proposalInfo.signatures[
+          i
+        ] = 'updateInterestRates(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)';
       proposalInfo.calldatas[i] = abi.encode(
         GENERATOR_CONFIG.cometProxy,
         rateUpdates[j].supplyPerYearInterestRateSlopeLow,
@@ -61,7 +50,6 @@ abstract contract ProposalGenerator is IProposalGenerator {
         rateUpdates[j].borrowPerYearInterestRateBase,
         rateUpdates[j].borrowKink,
         rateUpdates[j].supplyKink
-
       );
       i++;
     }
@@ -69,11 +57,17 @@ abstract contract ProposalGenerator is IProposalGenerator {
     return proposalInfo;
   }
 
-  function getNewAssetsConfigs() pure override virtual public returns (NewAssetConfig[] memory) {
+  function getNewAssetsConfigs() public pure virtual override returns (NewAssetConfig[] memory) {
     return new NewAssetConfig[](0);
   }
 
-  function getInterestRateUpdates() pure override virtual public returns (InterestRateUpdate[] memory) {
+  function getInterestRateUpdates()
+    public
+    pure
+    virtual
+    override
+    returns (InterestRateUpdate[] memory)
+  {
     return new InterestRateUpdate[](0);
   }
 }
