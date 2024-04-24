@@ -14,11 +14,11 @@ abstract contract ProposalGenerator is IProposalGenerator {
   }
 
   function createProposalPayload() public view returns (IProposalGenerator.ProposalInfo memory) {
-    NewAssetConfig[] memory assets = getNewAssetsConfigs();
+    NewAssetConfig[] memory addAssets = getNewAssetsConfigs();
 
     InterestRateUpdate[] memory rateUpdates = getInterestRateUpdates();
 
-    uint numActions = assets.length + rateUpdates.length;
+    uint numActions = addAssets.length + rateUpdates.length;
 
     IProposalGenerator.ProposalInfo memory proposalInfo;
 
@@ -28,11 +28,22 @@ abstract contract ProposalGenerator is IProposalGenerator {
     proposalInfo.calldatas = new bytes[](numActions);
 
     uint i = 0;
-    for (i = 0; i < assets.length; i++) {
+    for (i = 0; i < addAssets.length; i++) {
       proposalInfo.targets[i] = GENERATOR_CONFIG.configuratorProxy;
       proposalInfo.values[i] = 0;
-      proposalInfo.signatures[i] = 'configureAsset(address,address,uint8,uint64,uint64,uint64,uint128)';
-      proposalInfo.calldatas[i] = abi.encode(assets[i].asset, assets[i].priceFeed, assets[i].decimals, assets[i].borrowCollateralFactor, assets[i].liquidateCollateralFactor, assets[i].liquidationFactor, assets[i].supplyCap);
+      proposalInfo.signatures[i] = 'addAsset(address,tuple)';
+      proposalInfo.calldatas[i] = abi.encode(
+        GENERATOR_CONFIG.cometProxy,
+        new String[](
+          addAssets[i].asset,
+          addAssets[i].priceFeed,
+          addAssets[i].decimals,
+          addAssets[i].borrowCollateralFactor,
+          addAssets[i].liquidateCollateralFactor,
+          addAssets[i].liquidationFactor,
+          addAssets[i].supplyCap
+        )
+      );
     }
 
 
@@ -40,18 +51,29 @@ abstract contract ProposalGenerator is IProposalGenerator {
       proposalInfo.targets[i] = GENERATOR_CONFIG.configuratorProxy;
       proposalInfo.values[i] = 0;
       proposalInfo.signatures[i] = 'updateInterestRates(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)';
-      proposalInfo.calldatas[i] = abi.encode(rateUpdates[j].asset, rateUpdates[j].supplyPerYearInterestRateSlopeLow, rateUpdates[j].supplyPerYearInterestRateSlopeHigh, rateUpdates[j].supplyPerYearInterestRateBase, rateUpdates[j].borrowPerYearInterestRateSlopeLow, rateUpdates[j].borrowPerYearInterestRateSlopeHigh, rateUpdates[j].borrowPerYearInterestRateBase, rateUpdates[j].borrowKink, rateUpdates[j].supplyKink);
+      proposalInfo.calldatas[i] = abi.encode(
+        GENERATOR_CONFIG.cometProxy,
+        rateUpdates[j].supplyPerYearInterestRateSlopeLow,
+        rateUpdates[j].supplyPerYearInterestRateSlopeHigh,
+        rateUpdates[j].supplyPerYearInterestRateBase,
+        rateUpdates[j].borrowPerYearInterestRateSlopeLow,
+        rateUpdates[j].borrowPerYearInterestRateSlopeHigh,
+        rateUpdates[j].borrowPerYearInterestRateBase,
+        rateUpdates[j].borrowKink,
+        rateUpdates[j].supplyKink
+
+      );
       i++;
     }
 
     return proposalInfo;
   }
 
-  function getNewAssetsConfigs() pure public returns (NewAssetConfig[] memory) {
+  function getNewAssetsConfigs() pure override virtual public returns (NewAssetConfig[] memory) {
     return new NewAssetConfig[](0);
   }
 
-  function getInterestRateUpdates() pure public returns (InterestRateUpdate[] memory) {
+  function getInterestRateUpdates() pure override virtual public returns (InterestRateUpdate[] memory) {
     return new InterestRateUpdate[](0);
   }
 }
