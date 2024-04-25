@@ -7,6 +7,8 @@ import {IConfigurator} from 'src/contracts/IConfigurator.sol';
 import {VmSafe} from 'forge-std/Vm.sol';
 import 'forge-std/console.sol';
 import 'forge-std/Test.sol';
+import {IProposalGenerator} from '../../contracts/proposals/IProposalGenerator.sol';
+import '../../contracts/structs.sol';
 
 /**
  * @dev Test for AddAsset_Add_ARB_20240412
@@ -34,11 +36,13 @@ contract AddAsset_Add_ARB_20240412_Test is CommonTestBase {
     }
     return false;
   }
+
   function testAddAsset() public {
     require(!isAssetListed(), 'Asset should not be listed before execution.');
 
     vm.startPrank(address(0x6d903f6003cca6255D85CcA4D3B5E5146dC33925));
-    ProposalInfo proposalInfo = proposal.createProposalPayload();
-    executeProposal(proposalInfo);
+    Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
+    executeProposal(proposalInfo, vm);
+    vm.stopPrank();
   }
-}
+} 

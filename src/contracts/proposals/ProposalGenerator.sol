@@ -12,14 +12,14 @@ abstract contract ProposalGenerator is IProposalGenerator {
     GENERATOR_CONFIG = generatorConfig;
   }
 
-  function createProposalPayload() public view returns (IProposalGenerator.ProposalInfo memory) {
-    NewAssetConfig[] memory addAssets = getNewAssetsConfigs();
+  function createProposalPayload() public view returns (Structs.ProposalInfo memory) {
+    Structs.AssetConfig[] memory addAssets = getNewAssetsConfigs();
 
-    InterestRateUpdate[] memory rateUpdates = getInterestRateUpdates();
+    Structs.InterestRateUpdate[] memory rateUpdates = getInterestRateUpdates();
 
-    uint numActions = addAssets.length + rateUpdates.length;
+    uint numActions = addAssets.length + rateUpdates.length + 1;
 
-    IProposalGenerator.ProposalInfo memory proposalInfo;
+    Structs.ProposalInfo memory proposalInfo;
 
     proposalInfo.targets = new address[](numActions);
     proposalInfo.values = new uint256[](numActions);
@@ -55,16 +55,32 @@ abstract contract ProposalGenerator is IProposalGenerator {
     }
 
     // push another set of values to targets, values, signatures, calldatas
-    proposalInfo.targets.push(GENERATOR_CONFIG.cometProxyAdmin);
-    proposalInfo.signatures.push("deployAndUpgradeTo(address,address)");
-    proposalInfo.values.push(0);
-    proposalInfo.calldatas.push(abi.encode(GENERATOR_CONFIG.configuratorProxy, GENERATOR_CONFIG.cometProxy));
+    // proposalInfo.targets.push(GENERATOR_CONFIG.cometProxyAdmin);
+    // proposalInfo.signatures.push('deployAndUpgradeTo(address,address)');
+    // proposalInfo.values.push(0);
+    // proposalInfo.calldatas.push(
+    //   abi.encode(GENERATOR_CONFIG.configuratorProxy, GENERATOR_CONFIG.cometProxy)
+    // );
+
+    proposalInfo.targets[i] = GENERATOR_CONFIG.cometProxyAdmin;
+    proposalInfo.signatures[i] = 'deployAndUpgradeTo(address,address)';
+    proposalInfo.values[i] = 0;
+    proposalInfo.calldatas[i] = abi.encode(
+      GENERATOR_CONFIG.configuratorProxy,
+      GENERATOR_CONFIG.cometProxy
+    );
 
     return proposalInfo;
   }
 
-  function getNewAssetsConfigs() public pure virtual override returns (NewAssetConfig[] memory) {
-    return new NewAssetConfig[](0);
+  function getNewAssetsConfigs()
+    public
+    pure
+    virtual
+    override
+    returns (Structs.AssetConfig[] memory)
+  {
+    return new Structs.AssetConfig[](0);
   }
 
   function getInterestRateUpdates()
@@ -72,8 +88,8 @@ abstract contract ProposalGenerator is IProposalGenerator {
     pure
     virtual
     override
-    returns (InterestRateUpdate[] memory)
+    returns (Structs.InterestRateUpdate[] memory)
   {
-    return new InterestRateUpdate[](0);
+    return new Structs.InterestRateUpdate[](0);
   }
 }
