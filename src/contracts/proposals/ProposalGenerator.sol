@@ -54,6 +54,12 @@ abstract contract ProposalGenerator is IProposalGenerator {
       i++;
     }
 
+    // push another set of values to targets, values, signatures, calldatas
+    proposalInfo.targets.push(GENERATOR_CONFIG.cometProxyAdmin);
+    proposalInfo.signatures.push("deployAndUpgradeTo(address,address)");
+    proposalInfo.values.push(0);
+    proposalInfo.calldatas.push(abi.encode(GENERATOR_CONFIG.configuratorProxy, GENERATOR_CONFIG.cometProxy));
+
     return proposalInfo;
   }
 
