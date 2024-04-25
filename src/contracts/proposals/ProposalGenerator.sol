@@ -38,8 +38,8 @@ abstract contract ProposalGenerator is IProposalGenerator {
       proposalInfo.targets[i] = GENERATOR_CONFIG.configuratorProxy;
       proposalInfo.values[i] = 0;
       proposalInfo.signatures[
-          i
-        ] = 'updateInterestRates(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)';
+        i
+      ] = 'updateInterestRates(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)';
       proposalInfo.calldatas[i] = abi.encode(
         GENERATOR_CONFIG.cometProxy,
         rateUpdates[j].supplyPerYearInterestRateSlopeLow,
