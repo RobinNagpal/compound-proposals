@@ -22,4 +22,23 @@ contract Structs {
     uint64 liquidationFactor;
     uint128 supplyCap;
   }
+
+  struct InterestRateUpdate {
+    address asset;
+    uint64 supplyPerYearInterestRateSlopeLow;
+    uint64 supplyPerYearInterestRateSlopeHigh;
+    uint64 supplyPerYearInterestRateBase;
+    uint64 borrowPerYearInterestRateSlopeLow;
+    uint64 borrowPerYearInterestRateSlopeHigh;
+    uint64 borrowPerYearInterestRateBase;
+    uint64 borrowKink;
+    uint64 supplyKink;
+  }
+
+  struct ProposalInfo {
+    address[] targets;
+    uint256[] values;
+    string[] signatures;
+    bytes[] calldatas;
+  }
 }
