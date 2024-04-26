@@ -16,18 +16,19 @@ import '../../contracts/structs.sol';
  */
 contract AddAsset_Add_ARB_20240412_Test is CommonTestBase {
   AddAsset_Add_ARB_20240412 internal proposal;
+  IConfigurator configurator;
 
   function setUp() public {
     vm.createSelectFork(vm.rpcUrl('mainnet'), 18544451);
     proposal = new AddAsset_Add_ARB_20240412();
+    configurator = IConfigurator(address(0x316f9708bB98af7dA9c68C1C3b5e79039cD336E3));
   }
 
   function isAssetListed() internal returns (bool) {
-    IConfigurator configurator = IConfigurator(address(0x316f9708bB98af7dA9c68C1C3b5e79039cD336E3));
     try
       configurator.getAssetIndex(
         address(0xA17581A9E3356d9A858b789D68B4d866e593aE94),
-        address(0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1)
+        address(0xae78736Cd615f374D3085123A210448E74Fc6393)
       )
     returns (uint256 assetIndex) {
       return true;
@@ -39,10 +40,9 @@ contract AddAsset_Add_ARB_20240412_Test is CommonTestBase {
 
   function testAddAsset() public {
     require(!isAssetListed(), 'Asset should not be listed before execution.');
-
     vm.startPrank(address(0x6d903f6003cca6255D85CcA4D3B5E5146dC33925));
     Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
-    executeProposal(proposalInfo, vm);
+    executeProposal(proposalInfo);
     vm.stopPrank();
   }
 }

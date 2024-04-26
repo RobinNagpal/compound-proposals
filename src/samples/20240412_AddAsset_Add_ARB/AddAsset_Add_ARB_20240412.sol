@@ -28,13 +28,13 @@ contract AddAsset_Add_ARB_20240412 is
     Structs.AssetConfig[] memory configs = new Structs.AssetConfig[](1);
 
     configs[0] = Structs.AssetConfig({
-      asset: 0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1,
-      priceFeed: 0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6,
+       asset: address(0xae78736Cd615f374D3085123A210448E74Fc6393),
+      priceFeed: address(0xA3A7fB5963D1d69B95EEC4957f77678EF073Ba08),
       decimals: 18,
-      borrowCollateralFactor: 65,
-      liquidateCollateralFactor: 70,
-      liquidationFactor: 80,
-      supplyCap: 500000
+      borrowCollateralFactor: 900000000000000000,
+      liquidateCollateralFactor: 930000000000000000,
+      liquidationFactor: 970000000000000000,
+      supplyCap: 300000000000000000
     });
     return configs;
   }
