@@ -31,7 +31,7 @@ contract AddAsset_Add_ARB_20240412 is
        asset: address(0xae78736Cd615f374D3085123A210448E74Fc6393),
       priceFeed: address(0xA3A7fB5963D1d69B95EEC4957f77678EF073Ba08),
       decimals: 18,
-      borrowCollateralFactor: 900000000000000000,
+      borrowCollateralFactor: 900,
       liquidateCollateralFactor: 930000000000000000,
       liquidationFactor: 970000000000000000,
       supplyCap: 300000000000000000
