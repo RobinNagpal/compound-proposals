@@ -2,7 +2,10 @@
 pragma solidity >=0.6.0;
 
 library GovernanceV3Polygon {
-  address internal constant CONFIGURATOR_PROXY = 0x84E93EC6170ED630f5ebD89A1AAE72d4F63f2713;
+  address internal constant CONFIGURATOR_PROXY = 0x83E0F742cAcBE66349E3701B171eE2487a26e738;
+
+  address internal constant USDCE_COMET_PROXY = 0xF25212E676D1F7F89Cd72fFEe66158f541246445;
+  address internal constant USDCE_COMET_PROXY_ADMIN = 0xd712ACe4ca490D4F3E92992Ecf3DE12251b975F9;
 }
 
 library GovernanceV3PolygonAssets {

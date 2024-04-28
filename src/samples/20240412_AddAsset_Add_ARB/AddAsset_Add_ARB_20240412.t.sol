@@ -7,8 +7,8 @@ import {IConfigurator} from 'src/contracts/IConfigurator.sol';
 import {VmSafe} from 'forge-std/Vm.sol';
 import 'forge-std/console.sol';
 import 'forge-std/Test.sol';
-import {IProposalGenerator} from '../../contracts/proposals/IProposalGenerator.sol';
-import '../../contracts/structs.sol';
+import {IProposalGenerator} from 'src/contracts/proposals/IProposalGenerator.sol';
+import 'src/contracts/structs.sol';
 
 /**
  * @dev Test for AddAsset_Add_ARB_20240412

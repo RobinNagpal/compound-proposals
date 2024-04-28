@@ -3,12 +3,12 @@ pragma solidity ^0.8.0;
 
 import './../structs.sol';
 import {IProposalGenerator} from './IProposalGenerator.sol';
-import './GeneratorConfig.sol';
+import './MarketConfig.sol';
 
 abstract contract ProposalGenerator is IProposalGenerator {
-  GeneratorConfig public GENERATOR_CONFIG;
+  MarketConfig public GENERATOR_CONFIG;
 
-  constructor(GeneratorConfig memory generatorConfig) {
+  constructor(MarketConfig memory generatorConfig) {
     GENERATOR_CONFIG = generatorConfig;
   }
 
