@@ -30,7 +30,9 @@ abstract contract ProposalGenerator is IProposalGenerator {
     for (i = 0; i < addAssets.length; i++) {
       proposalInfo.targets[i] = GENERATOR_CONFIG.configuratorProxy;
       proposalInfo.values[i] = 0;
-      proposalInfo.signatures[i] = 'addAsset(address,tuple)';
+      proposalInfo.signatures[
+        i
+      ] = 'addAsset(address,(address,address,uint8,uint64,uint64,uint64,uint128))';
       proposalInfo.calldatas[i] = abi.encode(GENERATOR_CONFIG.cometProxy, addAssets[i]);
     }
 
@@ -53,14 +55,6 @@ abstract contract ProposalGenerator is IProposalGenerator {
       );
       i++;
     }
-
-    // push another set of values to targets, values, signatures, calldatas
-    // proposalInfo.targets.push(GENERATOR_CONFIG.cometProxyAdmin);
-    // proposalInfo.signatures.push('deployAndUpgradeTo(address,address)');
-    // proposalInfo.values.push(0);
-    // proposalInfo.calldatas.push(
-    //   abi.encode(GENERATOR_CONFIG.configuratorProxy, GENERATOR_CONFIG.cometProxy)
-    // );
 
     proposalInfo.targets[i] = GENERATOR_CONFIG.cometProxyAdmin;
     proposalInfo.signatures[i] = 'deployAndUpgradeTo(address,address)';
