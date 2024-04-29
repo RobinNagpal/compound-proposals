@@ -64,6 +64,8 @@ contract AddAsset_Add_ARB_USDCe_Polygon_20240429_Test is CommonTestBase {
     });
 
     executeProposal(newProposalInfo);
+
+    require(isAssetListed(), 'Asset should be listed after execution.');
     vm.stopPrank();
   }
 }
