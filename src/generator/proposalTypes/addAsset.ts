@@ -103,6 +103,9 @@ export const addAsset: FeatureModule<MarketAndAssetConfig> = {
   build({options, cfg}) {
     const {asset, priceFeed, decimals, borrowCollateralFactor, liquidateCollateralFactor, liquidationFactor, supplyCap} = cfg.asset;
     console.log('cfg: ', cfg);
+
+    // Use this API to get the latest block number currently being mined on the network.
+    // https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=1578638524&closest=before&apikey=YourApiKeyToken
     const response: CodeArtifact = {
       code: {
         fn: [
