@@ -9,6 +9,7 @@ import 'forge-std/console.sol';
 import 'forge-std/Test.sol';
 import {IProposalGenerator} from 'src/contracts/proposals/IProposalGenerator.sol';
 import 'src/contracts/structs.sol';
+import {GovernanceV3PolygonAssets, GovernanceV3Polygon} from 'src/contracts/compoundAddresses/GovernanceV3Polygon.sol';
 
 /**
  * @dev Test for AddAsset_Add_ARB_USDCe_Polygon_20240429
@@ -19,16 +20,16 @@ contract AddAsset_Add_ARB_USDCe_Polygon_20240429_Test is CommonTestBase {
   IConfigurator configurator;
 
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('mainnet'), 18544451);
+    vm.createSelectFork(vm.rpcUrl('polygon'), 56399500);
     proposal = new AddAsset_Add_ARB_USDCe_Polygon_20240429();
-    configurator = IConfigurator(address(0x316f9708bB98af7dA9c68C1C3b5e79039cD336E3));
+    configurator = IConfigurator(GovernanceV3Polygon.CONFIGURATOR_PROXY);
   }
 
   function isAssetListed() internal returns (bool) {
     try
       configurator.getAssetIndex(
-        address(0xA17581A9E3356d9A858b789D68B4d866e593aE94),
-        address(0xae78736Cd615f374D3085123A210448E74Fc6393)
+        GovernanceV3Polygon.USDCE_COMET_PROXY,
+        GovernanceV3PolygonAssets.LINK_TOKEN
       )
     returns (uint256 assetIndex) {
       return true;
@@ -40,7 +41,7 @@ contract AddAsset_Add_ARB_USDCe_Polygon_20240429_Test is CommonTestBase {
 
   function testAddAsset() public {
     require(!isAssetListed(), 'Asset should not be listed before execution.');
-    vm.startPrank(address(0x6d903f6003cca6255D85CcA4D3B5E5146dC33925));
+    vm.startPrank(GovernanceV3Polygon.TIMELOCK);
     Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
     executeProposal(proposalInfo);
     vm.stopPrank();
