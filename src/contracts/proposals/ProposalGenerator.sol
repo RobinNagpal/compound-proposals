@@ -6,10 +6,10 @@ import {IProposalGenerator} from './IProposalGenerator.sol';
 import './MarketConfig.sol';
 
 abstract contract ProposalGenerator is IProposalGenerator {
-  MarketConfig public GENERATOR_CONFIG;
+  MarketConfig public MARKET_CONFIG;
 
-  constructor(MarketConfig memory generatorConfig) {
-    GENERATOR_CONFIG = generatorConfig;
+  constructor(MarketConfig memory marketConfig) {
+    MARKET_CONFIG = marketConfig;
   }
 
   function createProposalPayload() public view returns (Structs.ProposalInfo memory) {
@@ -28,22 +28,22 @@ abstract contract ProposalGenerator is IProposalGenerator {
 
     uint i = 0;
     for (i = 0; i < addAssets.length; i++) {
-      proposalInfo.targets[i] = GENERATOR_CONFIG.configuratorProxy;
+      proposalInfo.targets[i] = MARKET_CONFIG.configuratorProxy;
       proposalInfo.values[i] = 0;
       proposalInfo.signatures[
         i
       ] = 'addAsset(address,(address,address,uint8,uint64,uint64,uint64,uint128))';
-      proposalInfo.calldatas[i] = abi.encode(GENERATOR_CONFIG.cometProxy, addAssets[i]);
+      proposalInfo.calldatas[i] = abi.encode(MARKET_CONFIG.cometProxy, addAssets[i]);
     }
 
     for (uint j = 0; j < rateUpdates.length; j++) {
-      proposalInfo.targets[i] = GENERATOR_CONFIG.configuratorProxy;
+      proposalInfo.targets[i] = MARKET_CONFIG.configuratorProxy;
       proposalInfo.values[i] = 0;
       proposalInfo.signatures[
         i
       ] = 'updateInterestRates(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)';
       proposalInfo.calldatas[i] = abi.encode(
-        GENERATOR_CONFIG.cometProxy,
+        MARKET_CONFIG.cometProxy,
         rateUpdates[j].supplyPerYearInterestRateSlopeLow,
         rateUpdates[j].supplyPerYearInterestRateSlopeHigh,
         rateUpdates[j].supplyPerYearInterestRateBase,
@@ -56,12 +56,12 @@ abstract contract ProposalGenerator is IProposalGenerator {
       i++;
     }
 
-    proposalInfo.targets[i] = GENERATOR_CONFIG.cometProxyAdmin;
+    proposalInfo.targets[i] = MARKET_CONFIG.cometProxyAdmin;
     proposalInfo.signatures[i] = 'deployAndUpgradeTo(address,address)';
     proposalInfo.values[i] = 0;
     proposalInfo.calldatas[i] = abi.encode(
-      GENERATOR_CONFIG.configuratorProxy,
-      GENERATOR_CONFIG.cometProxy
+      MARKET_CONFIG.configuratorProxy,
+      MARKET_CONFIG.cometProxy
     );
 
     return proposalInfo;

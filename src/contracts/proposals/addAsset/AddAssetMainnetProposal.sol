@@ -3,13 +3,13 @@ pragma solidity ^0.8.0;
 
 import {ProposalGenerator} from '../ProposalGenerator.sol';
 import {GovernanceV3Mainnet} from '../../compoundAddresses/GovernanceV3Mainnet.sol';
-import {GeneratorConfig} from '../MarketConfig.sol';
+import {MarketConfig} from '../MarketConfig.sol';
 import '../../../contracts/structs.sol';
 
 contract AddAssetMainnetProposal is ProposalGenerator {
   constructor()
     ProposalGenerator(
-      GeneratorConfig({
+      MarketConfig({
         configuratorProxy: GovernanceV3Mainnet.CONFIGURATOR_PROXY,
         cometProxy: address(0),
         cometProxyAdmin: address(0)
