@@ -16,7 +16,7 @@ import {GovernanceV3MainnetAssets} from '../../contracts/compoundAddresses/Gover
  * @author Robin Nagpal
  * - Discussion: TODO
  */
-contract AddAsset_Add_RETH_Weth_Mainnet_20240412 is WethMainnetProposalGenerator {
+contract AddAsset_Add_rETH_Weth_Mainnet_20240412 is WethMainnetProposalGenerator {
   function getNewAssetsConfigs() public pure override returns (Structs.AssetConfig[] memory) {
     Structs.AssetConfig[] memory configs = new Structs.AssetConfig[](1);
 
