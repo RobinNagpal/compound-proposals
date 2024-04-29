@@ -43,7 +43,27 @@ contract AddAsset_Add_ARB_USDCe_Polygon_20240429_Test is CommonTestBase {
     require(!isAssetListed(), 'Asset should not be listed before execution.');
     vm.startPrank(GovernanceV3Polygon.TIMELOCK);
     Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
-    executeProposal(proposalInfo);
+
+    (address target, bytes memory encodedProposal) = abi.decode(
+      proposalInfo.calldatas[0],
+      (address, bytes)
+    );
+
+    (
+      address[] memory targets,
+      uint256[] memory values,
+      string[] memory signatures,
+      bytes[] memory calldatas
+    ) = abi.decode(encodedProposal, (address[], uint256[], string[], bytes[]));
+
+    Structs.ProposalInfo memory newProposalInfo = Structs.ProposalInfo({
+      targets: targets,
+      values: values,
+      signatures: signatures,
+      calldatas: calldatas
+    });
+
+    executeProposal(newProposalInfo);
     vm.stopPrank();
   }
 }

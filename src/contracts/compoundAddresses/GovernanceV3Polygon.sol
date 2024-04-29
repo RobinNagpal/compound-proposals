@@ -28,5 +28,4 @@ library GovernanceV3PolygonAssets {
   address internal constant LINK_TOKEN = 0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39;
   address internal constant LINK_PRICE_FEED = 0x443C5116CdF663Eb387e72C688D276e702135C87; // TODO: This needs to be fixed
   uint8 internal constant LINK_DECIMALS = 18;
-
 }
