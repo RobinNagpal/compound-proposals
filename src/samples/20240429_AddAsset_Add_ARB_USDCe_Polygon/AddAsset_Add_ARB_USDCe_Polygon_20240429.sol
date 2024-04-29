@@ -7,7 +7,7 @@ import {Structs} from 'src/contracts/structs.sol';
 import {CommonTestBase} from 'src/contracts/CommonTestBase.sol';
 import {VmSafe} from 'forge-std/Vm.sol';
 import 'forge-std/console.sol';
-import {WethMainnetProposalGenerator} from '../../contracts/proposals/WethMainnetProposalGenerator.sol';
+import {UsdcePolygonProposalGenerator} from '../../contracts/proposals/UsdcePolygonProposalGenerator.sol';
 import '../../contracts/proposals/MarketConfig.sol';
 
 /**
@@ -15,7 +15,7 @@ import '../../contracts/proposals/MarketConfig.sol';
  * @author Robin Nagpal
  * - Discussion: TODO
  */
-contract AddAsset_Add_ARB_20240412 is WethMainnetProposalGenerator {
+contract AddAsset_Add_ARB_USDCe_Polygon_20240429 is UsdcePolygonProposalGenerator {
   function getNewAssetsConfigs() public pure override returns (Structs.AssetConfig[] memory) {
     Structs.AssetConfig[] memory configs = new Structs.AssetConfig[](1);
 
