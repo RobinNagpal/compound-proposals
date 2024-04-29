@@ -3,6 +3,7 @@ pragma solidity >=0.6.0;
 
 library GovernanceV3Mainnet {
   address internal constant CONFIGURATOR_PROXY = 0x316f9708bB98af7dA9c68C1C3b5e79039cD336E3;
+  address internal constant TIMELOCK = 0x6d903f6003cca6255D85CcA4D3B5E5146dC33925;
 
   address internal constant USDC_COMET_PROXY = 0xc3d688B66703497DAA19211EEdff47f25384cdc3;
   address internal constant USDC_COMET_PROXY_ADMIN = 0x1EC63B5883C3481134FD50D5DAebc83Ecd2E8779;
@@ -31,4 +32,8 @@ library GovernanceV3MainnetAssets {
   address internal constant LINK_TOKEN = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
   address internal constant LINK_PRICE_FEED = 0x2c1d072e956AFFC0D435Cb7AC38EF18d24d9127c;
   uint8 internal constant LINK_DECIMALS = 18;
+
+  address internal constant RETH_TOKEN = 0xae78736Cd615f374D3085123A210448E74Fc6393;
+  address internal constant RETH_PRICE_FEED = 0xA3A7fB5963D1d69B95EEC4957f77678EF073Ba08;
+  uint8 internal constant RETH_DECIMALS = 18;
 }
