@@ -12,7 +12,7 @@ abstract contract ProposalGenerator is IProposalGenerator {
     MARKET_CONFIG = marketConfig;
   }
 
-  function createProposalPayload() public view returns (Structs.ProposalInfo memory) {
+  function createProposalPayload() public view virtual returns (Structs.ProposalInfo memory) {
     Structs.AssetConfig[] memory addAssets = getNewAssetsConfigs();
 
     Structs.InterestRateUpdate[] memory rateUpdates = getInterestRateUpdates();
