@@ -10,21 +10,7 @@ async function runCLI() {
 
   const options = program.opts<Options>();
 
-  const PLACEHOLDER_MODULE: FeatureModule<{}> = {
-    description: 'Something different not supported by configEngine',
-    value: ProposalType.Others,
-    cli: async ({}) => {
-      return {};
-    },
-    build: ({}) => {
-      const response: CodeArtifact = {
-        code: {execute: ['// custom code goes here']},
-      };
-      return response;
-    },
-  };
-
-  const TypeOfCompoundProposals = [addAsset, PLACEHOLDER_MODULE];
+  const TypeOfCompoundProposals = [addAsset];
 
   options.features = await checkbox({
     message: `What do you want to do?`,
