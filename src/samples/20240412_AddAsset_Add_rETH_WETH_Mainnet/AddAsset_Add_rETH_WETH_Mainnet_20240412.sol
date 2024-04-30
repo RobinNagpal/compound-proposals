@@ -2,13 +2,8 @@
 pragma solidity ^0.8.15;
 
 import {IConfigurator} from 'src/contracts/IConfigurator.sol';
-import {ICometProxyAdmin} from 'src/contracts/ICometProxyAdmin.sol';
 import {Structs} from 'src/contracts/structs.sol';
-import {CommonTestBase} from 'src/contracts/CommonTestBase.sol';
-import {VmSafe} from 'forge-std/Vm.sol';
-import 'forge-std/console.sol';
 import {WethMainnetProposalGenerator} from '../../contracts/proposals/WethMainnetProposalGenerator.sol';
-import '../../contracts/proposals/MarketConfig.sol';
 import {GovernanceV3MainnetAssets} from '../../contracts/compoundAddresses/GovernanceV3Mainnet.sol';
 
 /**
