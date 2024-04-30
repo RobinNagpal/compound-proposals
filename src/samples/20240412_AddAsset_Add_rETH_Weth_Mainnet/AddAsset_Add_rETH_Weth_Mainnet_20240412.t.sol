@@ -39,11 +39,24 @@ contract AddAsset_Add_rETH_Weth_Mainnet_20240412_Test is CommonTestBase {
     return false;
   }
 
+  function getProposalForCurrentChain(
+    Structs.ProposalInfo memory proposalInfo
+  ) internal returns (Structs.ProposalInfo memory) {
+    return proposalInfo;
+  }
+
   function testAddAsset() public {
     require(!isAssetListed(), 'Asset should not be listed before execution.');
     vm.startPrank(GovernanceV3Mainnet.TIMELOCK);
     Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
-    executeProposal(proposalInfo);
+
+    Structs.ProposalInfo memory proposalInfoForCurrentChain = getProposalForCurrentChain(
+      proposalInfo
+    );
+
+    executeProposal(proposalInfoForCurrentChain);
+
+    require(isAssetListed(), 'Asset should be listed after execution.');
     vm.stopPrank();
   }
 }

@@ -39,10 +39,19 @@ contract AddAsset_Add_ARB_USDCe_Polygon_20240429_Test is CommonTestBase {
     return false;
   }
 
-  function testAddAsset() public {
-    require(!isAssetListed(), 'Asset should not be listed before execution.');
-    vm.startPrank(GovernanceV3Polygon.TIMELOCK);
-    Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
+  function getProposalForCurrentChain(
+    Structs.ProposalInfo memory proposalInfo
+  ) internal returns (Structs.ProposalInfo memory) {
+    require(proposalInfo.targets.length == 1, 'Only one target is allowed for this proposal.');
+    require(
+      proposalInfo.targets[0] == address(GovernanceV3Polygon.BRIDGE_RECEIVER),
+      'Invalid target'
+    );
+    require(
+      keccak256(bytes(proposalInfo.signatures[0])) ==
+        keccak256(bytes('sendMessageToChild(address,bytes)')),
+      'Invalid signature'
+    );
 
     (address target, bytes memory encodedProposal) = abi.decode(
       proposalInfo.calldatas[0],
@@ -62,8 +71,19 @@ contract AddAsset_Add_ARB_USDCe_Polygon_20240429_Test is CommonTestBase {
       signatures: signatures,
       calldatas: calldatas
     });
+    return newProposalInfo;
+  }
 
-    executeProposal(newProposalInfo);
+  function testAddAsset() public {
+    require(!isAssetListed(), 'Asset should not be listed before execution.');
+    vm.startPrank(GovernanceV3Polygon.TIMELOCK);
+    Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
+
+    Structs.ProposalInfo memory proposalInfoForCurrentChain = getProposalForCurrentChain(
+      proposalInfo
+    );
+
+    executeProposal(proposalInfoForCurrentChain);
 
     require(isAssetListed(), 'Asset should be listed after execution.');
     vm.stopPrank();
