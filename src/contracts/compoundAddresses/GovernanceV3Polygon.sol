@@ -8,6 +8,8 @@ library GovernanceV3Polygon {
   address internal constant USDCE_COMET_PROXY_ADMIN = 0xd712ACe4ca490D4F3E92992Ecf3DE12251b975F9;
 
   address internal constant BRIDGE_RECEIVER = 0x18281dfC4d00905DA1aaA6731414EABa843c468A;
+
+  address internal constant TIMELOCK = 0xCC3E7c85Bb0EE4f09380e041fee95a0caeDD4a02;
 }
 
 library GovernanceV3PolygonAssets {
@@ -22,4 +24,8 @@ library GovernanceV3PolygonAssets {
   address internal constant WMATIC_TOKEN = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
   address internal constant WMATIC_PRICE_FEED = 0xAB594600376Ec9fD91F8e885dADF0CE036862dE0;
   uint8 internal constant WMATIC_DECIMALS = 18;
+
+  address internal constant LINK_TOKEN = 0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39;
+  address internal constant LINK_PRICE_FEED = 0x443C5116CdF663Eb387e72C688D276e702135C87; // TODO: This needs to be fixed
+  uint8 internal constant LINK_DECIMALS = 18;
 }

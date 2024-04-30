@@ -1,10 +1,16 @@
-export const SupportedChains = ['Mainnet', 'Polygon', 'Arbitrum', 'Base'];
+export enum SupportedChain {
+  Mainnet = 'Mainnet',
+  Polygon = 'Polygon',
+  Arbitrum = 'Arbitrum',
+  Base = 'Base',
+  Optimism = 'Optimism',
+}
 
-export const BaseAssets = ['USDC', 'WETH'];
-
-export type SupportedChain = (typeof SupportedChains)[number];
-export type BaseAsset = (typeof BaseAssets)[number];
-
+export enum SupportedBaseAsset {
+  WETH = 'WETH',
+  BRIDGED_USDC = 'BRIDGED_USDC',
+  NATIVE_USDC = 'NATIVE_USDC',
+}
 export enum ProposalType {
   AddAsset = 'AddAsset',
   Others = 'Others',
@@ -21,7 +27,7 @@ export interface FeatureConfig {
 
 export interface Market {
   chain: SupportedChain;
-  baseAsset: BaseAsset;
+  baseAsset: SupportedBaseAsset;
 }
 export interface Options {
   force?: boolean;
@@ -53,7 +59,7 @@ export interface MarketAndAssetConfig {
 export interface MarketInfo {
   governor: string;
   pauseGuardian: string;
-  baseToken: BaseAsset;
+  baseToken: SupportedBaseAsset;
   baseTokenPriceFeed: string;
   extensionDelegate: string;
   supplyKink: string;
@@ -75,9 +81,9 @@ export interface MarketInfo {
 }
 
 export const AllMarkets: Market[] = [
-  {chain: 'Mainnet', baseAsset: 'USDC'},
-  {chain: 'Mainnet', baseAsset: 'WETH'},
-  {chain: 'Polygon', baseAsset: 'USDC'},
+  {chain: SupportedChain.Mainnet, baseAsset: SupportedBaseAsset.NATIVE_USDC},
+  {chain: SupportedChain.Mainnet, baseAsset: SupportedBaseAsset.WETH},
+  {chain: SupportedChain.Polygon, baseAsset: SupportedBaseAsset.BRIDGED_USDC},
 ];
 
 export type ConfigFile = {

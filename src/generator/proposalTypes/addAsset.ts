@@ -1,21 +1,20 @@
+import {select} from '@inquirer/prompts';
+import {addressPrompt} from '../prompts/addressPrompt';
+import {numberPrompt} from '../prompts/numberPrompt';
+import {percentPrompt} from '../prompts/percentPrompt';
+import {stringPrompt} from '../prompts/stringPrompt';
 import {
   AllMarkets,
   AssetConfig,
-  BaseAssets,
   CodeArtifact,
-  ProposalType,
   FeatureModule,
   Market,
-  MarketInfo,
-  SupportedChain,
-  SupportedChains,
   MarketAndAssetConfig,
+  Options,
+  ProposalType,
+  SupportedBaseAsset,
+  SupportedChain,
 } from '../types';
-import {select} from '@inquirer/prompts';
-import {stringPrompt} from '../prompts/stringPrompt';
-import {numberPrompt} from '../prompts/numberPrompt';
-import {addressPrompt} from '../prompts/addressPrompt';
-import {percentPrompt} from '../prompts/percentPrompt';
 import {Addresses} from '../utils/constants';
 
 async function fetchAssetConfig(required?: boolean): Promise<AssetConfig> {
@@ -85,12 +84,80 @@ async function fetchMarketInfo(): Promise<Market> {
   const baseAsset = await selectBaseAsset(chain);
   const marketInfo: Market = {
     chain: chain,
-    baseAsset: baseAsset,
+    baseAsset: baseAsset as SupportedBaseAsset,
   };
 
   return marketInfo;
 }
 
+const getLibraryNamesForChain = (chain: SupportedChain): {Governance: string; Assets: string} => {
+  switch (chain.toString()) {
+    case SupportedChain.Mainnet:
+      return {
+        Governance: 'GovernanceV3Mainnet',
+        Assets: 'GovernanceV3MainnetAssets',
+      };
+
+    case SupportedChain.Polygon:
+      return {
+        Governance: 'GovernanceV3Polygon',
+        Assets: 'GovernanceV3PolygonAssets',
+      };
+    default:
+      throw new Error('Unsupported chain');
+  }
+};
+const getProposalForCurrentChainFunction = (chain: SupportedChain) => {
+  switch (chain.toString()) {
+    case SupportedChain.Mainnet:
+      return `
+        function getProposalForCurrentChain(
+          Structs.ProposalInfo memory proposalInfo
+        ) internal returns (Structs.ProposalInfo memory) {
+          return proposalInfo;
+        }
+      `;
+    case SupportedChain.Polygon:
+      return `
+        function getProposalForCurrentChain(
+          Structs.ProposalInfo memory proposalInfo
+        ) internal returns (Structs.ProposalInfo memory) {
+          require(proposalInfo.targets.length == 1, 'Only one target is allowed for this proposal.');
+          require(
+            proposalInfo.targets[0] == address(GovernanceV3Polygon.BRIDGE_RECEIVER),
+            'Invalid target'
+          );
+          require(
+            keccak256(bytes(proposalInfo.signatures[0])) ==
+              keccak256(bytes('sendMessageToChild(address,bytes)')),
+            'Invalid signature'
+          );
+      
+          (address target, bytes memory encodedProposal) = abi.decode(
+            proposalInfo.calldatas[0],
+            (address, bytes)
+          );
+      
+          (
+            address[] memory targets,
+            uint256[] memory values,
+            string[] memory signatures,
+            bytes[] memory calldatas
+          ) = abi.decode(encodedProposal, (address[], uint256[], string[], bytes[]));
+      
+          Structs.ProposalInfo memory newProposalInfo = Structs.ProposalInfo({
+            targets: targets,
+            values: values,
+            signatures: signatures,
+            calldatas: calldatas
+          });
+          return newProposalInfo;
+        }
+      `;
+    default:
+      throw new Error('Unsupported chain');
+  }
+};
 export const addAsset: FeatureModule<MarketAndAssetConfig> = {
   value: ProposalType.AddAsset,
   description: 'Add asset',
@@ -100,9 +167,15 @@ export const addAsset: FeatureModule<MarketAndAssetConfig> = {
 
     return {asset, market: marketInfo};
   },
-  build({options, cfg}) {
+  build({options, cfg}: {options: Options; cfg: MarketAndAssetConfig}) {
+    const isMainnetProposal = cfg.market.chain === SupportedChain.Mainnet;
     const {asset, priceFeed, decimals, borrowCollateralFactor, liquidateCollateralFactor, liquidationFactor, supplyCap} = cfg.asset;
     console.log('cfg: ', cfg);
+
+    const libraryNamesForChain = getLibraryNamesForChain(cfg.market.chain);
+
+    // Use this API to get the latest block number currently being mined on the network.
+    // https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=1578638524&closest=before&apikey=YourApiKeyToken
     const response: CodeArtifact = {
       code: {
         fn: [
@@ -111,13 +184,13 @@ export const addAsset: FeatureModule<MarketAndAssetConfig> = {
             ICometProxyAdmin cometProxyAdmin = ICometProxyAdmin(${Addresses.cometProxyAdminAddress}); 
 
             Structs.AssetConfig memory assetConfig = Structs.AssetConfig({
-                asset: ${asset},
-                priceFeed: ${priceFeed},
-                decimals: ${decimals},
-                borrowCollateralFactor: ${borrowCollateralFactor},
-                liquidateCollateralFactor: ${liquidateCollateralFactor},
-                liquidationFactor: ${liquidationFactor},
-                supplyCap: ${supplyCap}
+              asset: ${asset},
+              priceFeed: ${priceFeed},
+              decimals: ${decimals},
+              borrowCollateralFactor: ${borrowCollateralFactor},
+              liquidateCollateralFactor: ${liquidateCollateralFactor},
+              liquidationFactor: ${liquidationFactor},
+              supplyCap: ${supplyCap}
             });
             
             configurator.addAsset(${Addresses.cometProxyAddress}, assetConfig);
@@ -130,27 +203,37 @@ export const addAsset: FeatureModule<MarketAndAssetConfig> = {
         fn: [
           `
           function isAssetListed() internal returns (bool) {
-            IConfigurator configurator = IConfigurator(address(${Addresses.configuratorAddress})); 
-            try configurator.getAssetIndex(address(${Addresses.cometProxyAddress}), address(${asset})) returns (uint256 assetIndex) {
-                return true;
+            try
+              configurator.getAssetIndex(
+                ${libraryNamesForChain.Governance}.USDCE_COMET_PROXY,
+                ${libraryNamesForChain.Assets}.LINK_TOKEN
+              )
+            returns (uint256 assetIndex) {
+              return true;
             } catch (bytes memory lowLevelData) {
-                emit log('Asset is not listed');
+              emit log('Asset is not listed');
             }
             return false;
-          }`,
+          }
+          `,
+          getProposalForCurrentChainFunction(cfg.market.chain),
+          `
+          function testAddAsset() public {
+            require(!isAssetListed(), 'Asset should not be listed before execution.');
+            vm.startPrank(${libraryNamesForChain.Governance}.TIMELOCK);
+            Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
+        
+            Structs.ProposalInfo memory proposalInfoForCurrentChain = getProposalForCurrentChain(
+              proposalInfo
+            );
+        
+            executeProposal(proposalInfoForCurrentChain);
+        
+            require(isAssetListed(), 'Asset should be listed after execution.');
+            vm.stopPrank();
+          }
 
-          `function testAddAsset() public {
-      
-              require(!isAssetListed(), 'Asset should not be listed before execution.');
-      
-              vm.startPrank(address(${Addresses.governorAddress}));
-              try proposal.executeAddAsset() {
-                  require(isAssetListed(), 'Asset should be listed after execution.');
-                  emit log('AddAsset executed successfully, and asset is now listed.');
-              } catch {
-                  emit log('AddAsset execution failed.');
-              }
-          }`,
+          `,
         ],
       },
     };

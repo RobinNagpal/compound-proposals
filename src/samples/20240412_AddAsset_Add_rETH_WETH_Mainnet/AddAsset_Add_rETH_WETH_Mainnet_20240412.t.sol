@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import {AddAsset_Add_rETH_Weth_Mainnet_20240412} from './AddAsset_Add_ARB_Weth_Mainnet_20240412.sol';
+import {AddAsset_Add_rETH_WETH_Mainnet_20240412} from './AddAsset_Add_rETH_WETH_Mainnet_20240412.sol';
 import {CommonTestBase} from 'src/contracts/CommonTestBase.sol';
 import {IConfigurator} from 'src/contracts/IConfigurator.sol';
 import {VmSafe} from 'forge-std/Vm.sol';
@@ -15,14 +15,14 @@ import {GovernanceV3MainnetAssets, GovernanceV3Mainnet} from '../../contracts/co
  * @dev Test for AddAsset_Add_rETH_Weth_Mainnet_20240412
  * command: make test-contract filter=AddAsset_Add_rETH_Weth_Mainnet_20240412
  */
-contract AddAsset_Add_rETH_Weth_Mainnet_20240412 is CommonTestBase {
-  AddAsset_Add_rETH_Weth_Mainnet_20240412 internal proposal;
+contract AddAsset_Add_rETH_WETH_Mainnet_20240412_Test is CommonTestBase {
+  AddAsset_Add_rETH_WETH_Mainnet_20240412 internal proposal;
   IConfigurator configurator;
 
   function setUp() public {
     vm.createSelectFork(vm.rpcUrl('mainnet'), 18544451);
-    proposal = new AddAsset_Add_rETH_Weth_Mainnet_20240412();
-    configurator = IConfigurator(GovernanceV3Mainnet.CONFIGURATOR_ADDRESS);
+    proposal = new AddAsset_Add_rETH_WETH_Mainnet_20240412();
+    configurator = IConfigurator(GovernanceV3Mainnet.CONFIGURATOR_PROXY);
   }
 
   function isAssetListed() internal returns (bool) {
@@ -39,11 +39,24 @@ contract AddAsset_Add_rETH_Weth_Mainnet_20240412 is CommonTestBase {
     return false;
   }
 
+  function getProposalForCurrentChain(
+    Structs.ProposalInfo memory proposalInfo
+  ) internal returns (Structs.ProposalInfo memory) {
+    return proposalInfo;
+  }
+
   function testAddAsset() public {
     require(!isAssetListed(), 'Asset should not be listed before execution.');
     vm.startPrank(GovernanceV3Mainnet.TIMELOCK);
     Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
-    executeProposal(proposalInfo);
+
+    Structs.ProposalInfo memory proposalInfoForCurrentChain = getProposalForCurrentChain(
+      proposalInfo
+    );
+
+    executeProposal(proposalInfoForCurrentChain);
+
+    require(isAssetListed(), 'Asset should be listed after execution.');
     vm.stopPrank();
   }
 }
