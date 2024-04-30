@@ -4,8 +4,9 @@ import {prefixWithPragma} from '../utils/constants';
 import {prefixWithImports} from '../utils/importsResolver';
 
 export const testTemplate = (options: Options, featureConfig: FeatureConfig, proposalType: ProposalType) => {
-  //   const chain = getPoolChain(pool);
   const contractName = generateContractName(options, proposalType);
+
+  const chain = options.market.chain;
 
   const functions = featureConfig.artifacts
     .map((artifact) => artifact.test?.fn)
@@ -15,13 +16,6 @@ export const testTemplate = (options: Options, featureConfig: FeatureConfig, pro
 
   let template = `
   import {${contractName}} from './${contractName}.sol';
-  import {CommonTestBase} from 'src/contracts/CommonTestBase.sol';
-  import {IConfigurator} from 'src/contracts/IConfigurator.sol';
-  import {VmSafe} from 'forge-std/Vm.sol';
-  import 'forge-std/console.sol';
-  import 'forge-std/Test.sol';
-
-
 
 /**
  * @dev Test for ${contractName}
@@ -31,11 +25,11 @@ contract ${contractName}_Test is CommonTestBase {
   ${contractName} internal proposal;
 
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('mainnet'), 18544451);
+    vm.createSelectFork(vm.rpcUrl(${chain.toLowerCase()}), 18544451);
     proposal = new ${contractName}();
   }
 
   ${functions}
 }`;
-  return prefixWithPragma(template);
+  return prefixWithPragma(prefixWithImports(options.market, template, 'test'));
 };
