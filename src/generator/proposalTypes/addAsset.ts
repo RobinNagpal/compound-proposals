@@ -14,26 +14,15 @@ import {
   ProposalType,
   SupportedBaseAsset,
   SupportedChain,
+  TokenMapping,
 } from '../types';
-import {Addresses} from '../utils/constants';
 
-async function fetchAssetConfig(required?: boolean): Promise<AssetConfig> {
+async function fetchAssetConfig(chain: SupportedChain): Promise<AssetConfig> {
+  const asset = await selectToken(chain);
   return {
-    asset: await addressPrompt({
-      message: 'Enter the asset address:',
-      required: true,
-      defaultValue: '0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1',
-    }),
-    priceFeed: await addressPrompt({
-      message: 'Enter the price feed address:',
-      required: true,
-      defaultValue: '0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6',
-    }),
-    decimals: await stringPrompt({
-      message: 'Enter the decimals:',
-      required: true,
-      defaultValue: '18',
-    }),
+    asset: `${asset}_TOKEN`,
+    priceFeed: `${asset}_PRICE_FEED`,
+    decimals: `${asset}_DECIMALS`,
     borrowCollateralFactor: await percentPrompt({
       message: 'Enter the borrow collateral factor:',
       required: true,
@@ -76,6 +65,15 @@ async function selectBaseAsset(chain: SupportedChain): Promise<string> {
   return await select({
     message: 'What is the base asset for the market?',
     choices: baseAssetChoices.map((a) => ({value: a, name: a})),
+  });
+}
+
+async function selectToken(chain: SupportedChain): Promise<string> {
+  const tokenChoices = TokenMapping[chain];
+
+  return await select({
+    message: 'Select the token you want to add:',
+    choices: tokenChoices.map((token) => ({value: token, name: token})),
   });
 }
 
@@ -163,13 +161,14 @@ export const addAsset: FeatureModule<MarketAndAssetConfig> = {
   description: 'Add asset',
   async cli({options}): Promise<MarketAndAssetConfig> {
     const marketInfo = await fetchMarketInfo();
-    const asset = await fetchAssetConfig();
+    const asset = await fetchAssetConfig(marketInfo.chain);
 
     return {asset, market: marketInfo};
   },
   build({options, cfg}: {options: Options; cfg: MarketAndAssetConfig}) {
     const isMainnetProposal = cfg.market.chain === SupportedChain.Mainnet;
     const {asset, priceFeed, decimals, borrowCollateralFactor, liquidateCollateralFactor, liquidationFactor, supplyCap} = cfg.asset;
+    const {chain, baseAsset} = cfg.market;
     console.log('cfg: ', cfg);
 
     const libraryNamesForChain = getLibraryNamesForChain(cfg.market.chain);
@@ -179,34 +178,33 @@ export const addAsset: FeatureModule<MarketAndAssetConfig> = {
     const response: CodeArtifact = {
       code: {
         fn: [
-          `function executeAddAsset() external {
-            IConfigurator configurator = IConfigurator(${Addresses.configuratorAddress}); 
-            ICometProxyAdmin cometProxyAdmin = ICometProxyAdmin(${Addresses.cometProxyAdminAddress}); 
-
-            Structs.AssetConfig memory assetConfig = Structs.AssetConfig({
-              asset: ${asset},
-              priceFeed: ${priceFeed},
-              decimals: ${decimals},
+          `
+          function getNewAssetsConfigs() public pure override returns (Structs.AssetConfig[] memory) {
+            Structs.AssetConfig[] memory configs = new Structs.AssetConfig[](1);
+        
+            configs[0] = Structs.AssetConfig({
+              asset: ${libraryNamesForChain.Assets}.${asset},
+              priceFeed: ${libraryNamesForChain.Assets}.${priceFeed},
+              decimals: ${libraryNamesForChain.Assets}.${decimals},
               borrowCollateralFactor: ${borrowCollateralFactor},
               liquidateCollateralFactor: ${liquidateCollateralFactor},
               liquidationFactor: ${liquidationFactor},
               supplyCap: ${supplyCap}
             });
-            
-            configurator.addAsset(${Addresses.cometProxyAddress}, assetConfig);
-            
-            cometProxyAdmin.deployAndUpgradeTo(${Addresses.configuratorAddress}, ${Addresses.cometProxyAddress});
-          }`,
+            return configs;
+          }
+          `,
         ],
       },
       test: {
         fn: [
           `
           function isAssetListed() internal returns (bool) {
+            IConfigurator configurator = IConfigurator(${libraryNamesForChain.Governance}.CONFIGURATOR_PROXY);
             try
               configurator.getAssetIndex(
-                ${libraryNamesForChain.Governance}.USDCE_COMET_PROXY,
-                ${libraryNamesForChain.Assets}.LINK_TOKEN
+                ${libraryNamesForChain.Governance}.${baseAsset}_COMET_PROXY,
+                ${libraryNamesForChain.Assets}.${asset}_TOKEN
               )
             returns (uint256 assetIndex) {
               return true;
@@ -229,7 +227,7 @@ export const addAsset: FeatureModule<MarketAndAssetConfig> = {
         
             executeProposal(proposalInfoForCurrentChain);
         
-            require(isAssetListed(), 'Asset should be listed after execution.');
+            require(isAssetListed(), 'Asset is not listed after execution.');
             vm.stopPrank();
           }
 
