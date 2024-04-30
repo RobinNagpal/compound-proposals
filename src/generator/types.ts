@@ -16,6 +16,20 @@ export enum ProposalType {
   Others = 'Others',
 }
 
+enum PolygonAssets {
+  WETH = 'WETH',
+  NATIVE_USDC = 'NATIVE_USDC',
+  BRIDGED_USDC = 'BRIDGED_USDC',
+
+  WBTC = 'WBTC',
+  WMATIC = 'WMATIC',
+
+  LINK = 'LINK',
+  UNI = 'UNI',
+}
+
+const PolygonNativeUsdcCollateralAssets = [PolygonAssets.WETH, PolygonAssets.WMATIC, PolygonAssets.WBTC];
+
 export type FeatureConfigs = Partial<Record<ProposalType, FeatureConfig>>;
 
 export type FeatureCache = {blockNumber: number};
