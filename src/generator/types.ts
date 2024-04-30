@@ -11,6 +11,7 @@ export enum SupportedBaseAsset {
   BRIDGED_USDC = 'BRIDGED_USDC',
   NATIVE_USDC = 'NATIVE_USDC',
 }
+
 export enum ProposalType {
   AddAsset = 'AddAsset',
   Others = 'Others',
@@ -29,6 +30,15 @@ export interface Market {
   chain: SupportedChain;
   baseAsset: SupportedBaseAsset;
 }
+
+export const TokenMapping = {
+  [SupportedChain.Mainnet]: ['WETH', 'USDC', 'COMP', 'LINK', 'UNI', 'WBTC', 'RETH'],
+  [SupportedChain.Polygon]: ['LINK', 'WETH', 'WBTC', 'WMATIC'],
+  [SupportedChain.Arbitrum]: [],
+  [SupportedChain.Base]: [],
+  [SupportedChain.Optimism]: [],
+};
+
 export interface Options {
   force?: boolean;
   market: Market;
@@ -93,7 +103,6 @@ export type ConfigFile = {
 
 export type CodeArtifact = {
   code?: {
-    constants?: string[];
     fn?: string[];
     execute?: string[];
   };

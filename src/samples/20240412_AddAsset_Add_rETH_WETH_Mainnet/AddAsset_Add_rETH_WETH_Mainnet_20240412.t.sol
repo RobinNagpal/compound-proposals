@@ -5,7 +5,6 @@ import {AddAsset_Add_rETH_WETH_Mainnet_20240412} from './AddAsset_Add_rETH_WETH_
 import {CommonTestBase} from 'src/contracts/CommonTestBase.sol';
 import {IConfigurator} from 'src/contracts/IConfigurator.sol';
 import {VmSafe} from 'forge-std/Vm.sol';
-import 'forge-std/console.sol';
 import 'forge-std/Test.sol';
 import {IProposalGenerator} from 'src/contracts/proposals/IProposalGenerator.sol';
 import 'src/contracts/structs.sol';
@@ -22,10 +21,10 @@ contract AddAsset_Add_rETH_WETH_Mainnet_20240412_Test is CommonTestBase {
   function setUp() public {
     vm.createSelectFork(vm.rpcUrl('mainnet'), 18544451);
     proposal = new AddAsset_Add_rETH_WETH_Mainnet_20240412();
-    configurator = IConfigurator(GovernanceV3Mainnet.CONFIGURATOR_PROXY);
   }
 
   function isAssetListed() internal returns (bool) {
+    configurator = IConfigurator(GovernanceV3Mainnet.CONFIGURATOR_PROXY);
     try
       configurator.getAssetIndex(
         GovernanceV3Mainnet.WETH_COMET_PROXY,

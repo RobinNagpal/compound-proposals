@@ -7,18 +7,10 @@ export const proposalTemplate = (options: Options, featureConfig: FeatureConfig,
   const {title, author, discussion} = options;
   const contractName = generateContractName(options, proposalType);
 
-  const constants = featureConfig.artifacts
-    .map((artifact) => artifact.code?.constants)
-    .flat()
-    .filter((f) => f !== undefined)
-    .join('\n');
+  const {chain, baseAsset} = options.market;
+
   const functions = featureConfig.artifacts
     .map((artifact) => artifact.code?.fn)
-    .flat()
-    .filter((f) => f !== undefined)
-    .join('\n');
-  const innerExecute = featureConfig.artifacts
-    .map((artifact) => artifact.code?.execute)
     .flat()
     .filter((f) => f !== undefined)
     .join('\n');
@@ -28,10 +20,10 @@ export const proposalTemplate = (options: Options, featureConfig: FeatureConfig,
   * @author ${author || 'TODO'}
   * - Discussion: ${discussion || 'TODO'}
   */
- contract ${contractName} {
+ contract ${contractName} is ${baseAsset}${chain}ProposalGenerator {
 
    ${functions}
  }`;
 
-  return prefixWithPragma(prefixWithImports(contract));
+  return prefixWithPragma(prefixWithImports(options.market, contract, 'proposal'));
 };
