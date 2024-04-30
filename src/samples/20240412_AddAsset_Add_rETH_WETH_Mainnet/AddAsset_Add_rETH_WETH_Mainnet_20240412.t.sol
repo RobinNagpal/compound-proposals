@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import {AddAsset_Add_rETH_Weth_Mainnet_20240412} from './AddAsset_Add_rETH_Weth_Mainnet_20240412.sol';
+import {AddAsset_Add_rETH_WETH_Mainnet_20240412} from './AddAsset_Add_rETH_WETH_Mainnet_20240412.sol';
 import {CommonTestBase} from 'src/contracts/CommonTestBase.sol';
 import {IConfigurator} from 'src/contracts/IConfigurator.sol';
 import {VmSafe} from 'forge-std/Vm.sol';
@@ -15,13 +15,13 @@ import {GovernanceV3MainnetAssets, GovernanceV3Mainnet} from '../../contracts/co
  * @dev Test for AddAsset_Add_rETH_Weth_Mainnet_20240412
  * command: make test-contract filter=AddAsset_Add_rETH_Weth_Mainnet_20240412
  */
-contract AddAsset_Add_rETH_Weth_Mainnet_20240412_Test is CommonTestBase {
-  AddAsset_Add_rETH_Weth_Mainnet_20240412 internal proposal;
+contract AddAsset_Add_rETH_WETH_Mainnet_20240412_Test is CommonTestBase {
+  AddAsset_Add_rETH_WETH_Mainnet_20240412 internal proposal;
   IConfigurator configurator;
 
   function setUp() public {
     vm.createSelectFork(vm.rpcUrl('mainnet'), 18544451);
-    proposal = new AddAsset_Add_rETH_Weth_Mainnet_20240412();
+    proposal = new AddAsset_Add_rETH_WETH_Mainnet_20240412();
     configurator = IConfigurator(GovernanceV3Mainnet.CONFIGURATOR_PROXY);
   }
 
