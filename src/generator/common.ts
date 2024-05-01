@@ -1,5 +1,5 @@
-import {AllMarkets, Market, Options, ProposalType} from './types';
-import {arbitrum, avalanche, mainnet, metis, optimism, polygon, base, bsc, gnosis, scroll} from 'viem/chains';
+import {arbitrum, avalanche, base, mainnet, metis, optimism, polygon, scroll} from 'viem/chains';
+import {Options, ProposalType} from './types';
 
 export function getDate() {
   const date = new Date();

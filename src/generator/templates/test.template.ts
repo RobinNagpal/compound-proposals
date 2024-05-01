@@ -1,12 +1,12 @@
 import {generateContractName, getChainAlias} from '../common';
-import {Options, FeatureConfig, ProposalType} from '../types';
+import {Options, FeatureConfig, ProposalType, ProposalSelections} from '../types';
 import {prefixWithPragma} from '../utils/constants';
 import {prefixWithImports} from '../utils/importsResolver';
 
-export const testTemplate = (options: Options, featureConfig: FeatureConfig, proposalType: ProposalType) => {
-  const contractName = generateContractName(options, proposalType);
+export const testTemplate = (proposalSelections: ProposalSelections, featureConfig: FeatureConfig, proposalType: ProposalType) => {
+  const contractName = generateContractName(proposalSelections, proposalType);
 
-  const chain = options.market.chain;
+  const chain = proposalSelections.market.chain;
 
   const functions = featureConfig.artifacts
     .map((artifact) => artifact.test?.fn)
@@ -25,11 +25,11 @@ contract ${contractName}_Test is CommonTestBase {
   ${contractName} internal proposal;
 
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl(${chain.toLowerCase()}), 18544451);
+    vm.createSelectFork(vm.rpcUrl('${chain.toLowerCase()}'), 18544451);
     proposal = new ${contractName}();
   }
 
   ${functions}
 }`;
-  return prefixWithPragma(prefixWithImports(options.market, template, 'test'));
+  return prefixWithPragma(prefixWithImports(proposalSelections.market, template, 'test'));
 };

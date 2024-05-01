@@ -1,21 +1,8 @@
 import {select} from '@inquirer/prompts';
-import {addressPrompt} from '../prompts/addressPrompt';
 import {numberPrompt} from '../prompts/numberPrompt';
 import {percentPrompt} from '../prompts/percentPrompt';
-import {stringPrompt} from '../prompts/stringPrompt';
-import {
-  AllMarkets,
-  AssetConfig,
-  CodeArtifact,
-  FeatureModule,
-  Market,
-  MarketAndAssetConfig,
-  Options,
-  ProposalType,
-  SupportedBaseAsset,
-  SupportedChain,
-  TokenMapping,
-} from '../types';
+import {AllMarkets, AssetConfig, CodeArtifact, FeatureModule, Market, MarketAndAssetConfig, Options, ProposalType, TokenMapping} from '../types';
+import {SupportedBaseAsset, SupportedChain} from './../compoudMarkets';
 
 async function fetchAssetConfig(chain: SupportedChain): Promise<AssetConfig> {
   const asset = await selectToken(chain);
@@ -186,10 +173,10 @@ export const addAsset: FeatureModule<MarketAndAssetConfig> = {
               asset: ${libraryNamesForChain.Assets}.${asset},
               priceFeed: ${libraryNamesForChain.Assets}.${priceFeed},
               decimals: ${libraryNamesForChain.Assets}.${decimals},
-              borrowCollateralFactor: ${borrowCollateralFactor},
-              liquidateCollateralFactor: ${liquidateCollateralFactor},
-              liquidationFactor: ${liquidationFactor},
-              supplyCap: ${supplyCap}
+              borrowCollateralFactor: ${borrowCollateralFactor}0000000000000000,
+              liquidateCollateralFactor: ${liquidateCollateralFactor}0000000000000000,
+              liquidationFactor: ${liquidationFactor}0000000000000000,
+              supplyCap: uint128(${supplyCap} * 10**${libraryNamesForChain.Assets}.${decimals})
             });
             return configs;
           }
@@ -204,7 +191,7 @@ export const addAsset: FeatureModule<MarketAndAssetConfig> = {
             try
               configurator.getAssetIndex(
                 ${libraryNamesForChain.Governance}.${baseAsset}_COMET_PROXY,
-                ${libraryNamesForChain.Assets}.${asset}_TOKEN
+                ${libraryNamesForChain.Assets}.${asset}
               )
             returns (uint256 assetIndex) {
               return true;

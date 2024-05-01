@@ -1,11 +1,11 @@
 import {generateContractName, generateFolderName} from '../common';
-import {FeatureConfig, FeatureConfigs, Options} from '../types';
+import {FeatureConfig, FeatureConfigs, Options, ProposalSelections} from '../types';
 import {prefixWithPragma} from '../utils/constants';
 import {prefixWithImports} from '../utils/importsResolver';
 
-export function generateScript(options: Options, featureConfig: FeatureConfigs) {
-  const folderName = generateFolderName(options);
-  const fileName = generateContractName(options);
+export function generateScript(proposalSelections: ProposalSelections, featureConfig: FeatureConfigs) {
+  const folderName = generateFolderName(proposalSelections);
+  const fileName = generateContractName(proposalSelections);
   let template = '';
   // generate imports
   template += `import {EthereumScript} from 'src/contracts/ScriptUtils.sol';\n`;
@@ -20,5 +20,5 @@ contract CreateProposal is EthereumScript {
      // create the proposal
   }
 }`;
-  return prefixWithPragma(prefixWithImports(template));
+  return prefixWithPragma(prefixWithImports(proposalSelections.market, template, 'script'));
 }

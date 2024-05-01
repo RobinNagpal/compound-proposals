@@ -61,12 +61,17 @@ async function runCLI() {
   }
 
   try {
-    const files = await generateFiles(options, {
-      [feature]: {
-        configs: selectedProposalConfig,
-        artifacts: [codeArtifact],
+    console.log('Generating files with options:', options, selectedProposalConfig, selectedProposalType);
+
+    const files = await generateFiles(
+      {...options, market: selectedProposalConfig.market},
+      {
+        [feature]: {
+          configs: selectedProposalConfig,
+          artifacts: [codeArtifact],
+        },
       },
-    });
+    );
     await writeFiles(options, files);
   } catch (e) {
     console.log('Error: ', e);

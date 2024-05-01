@@ -6,7 +6,7 @@ import {ProposalGenerator} from './ProposalGenerator.sol';
 import './MarketConfig.sol';
 import {GovernanceV3Polygon} from '../compoundAddresses/GovernanceV3Polygon.sol';
 
-abstract contract UsdcePolygonProposalGenerator is
+abstract contract BridgedUsdcPolygonProposalGenerator is
   ProposalGenerator(
     MarketConfig({
       configuratorProxy: address(GovernanceV3Polygon.CONFIGURATOR_PROXY),

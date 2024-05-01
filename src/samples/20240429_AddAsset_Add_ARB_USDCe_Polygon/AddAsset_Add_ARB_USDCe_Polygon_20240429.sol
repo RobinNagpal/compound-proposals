@@ -7,7 +7,7 @@ import {Structs} from 'src/contracts/structs.sol';
 import {CommonTestBase} from 'src/contracts/CommonTestBase.sol';
 import {VmSafe} from 'forge-std/Vm.sol';
 import 'forge-std/console.sol';
-import {UsdcePolygonProposalGenerator} from 'src/contracts/proposals/UsdcePolygonProposalGenerator.sol';
+import {BridgedUsdcPolygonProposalGenerator} from 'src/contracts/proposals/BridgedUsdcPolygonProposalGenerator.sol';
 import 'src/contracts/proposals/MarketConfig.sol';
 import {GovernanceV3PolygonAssets} from 'src/contracts/compoundAddresses/GovernanceV3Polygon.sol';
 
@@ -16,7 +16,7 @@ import {GovernanceV3PolygonAssets} from 'src/contracts/compoundAddresses/Governa
  * @author Robin Nagpal
  * - Discussion: TODO
  */
-contract AddAsset_Add_ARB_USDCe_Polygon_20240429 is UsdcePolygonProposalGenerator {
+contract AddAsset_Add_ARB_USDCe_Polygon_20240429 is BridgedUsdcPolygonProposalGenerator {
   function getNewAssetsConfigs() public pure override returns (Structs.AssetConfig[] memory) {
     Structs.AssetConfig[] memory configs = new Structs.AssetConfig[](1);
 

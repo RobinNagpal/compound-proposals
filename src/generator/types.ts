@@ -1,16 +1,4 @@
-export enum SupportedChain {
-  Mainnet = 'Mainnet',
-  Polygon = 'Polygon',
-  Arbitrum = 'Arbitrum',
-  Base = 'Base',
-  Optimism = 'Optimism',
-}
-
-export enum SupportedBaseAsset {
-  WETH = 'WETH',
-  BRIDGED_USDC = 'BRIDGED_USDC',
-  NATIVE_USDC = 'NATIVE_USDC',
-}
+import {MAINNET_KNOWN_ASSETS, POLYGON_KNOWN_ASSETS, SupportedBaseAsset, SupportedChain} from './compoudMarkets';
 
 export enum ProposalType {
   AddAsset = 'AddAsset',
@@ -18,8 +6,6 @@ export enum ProposalType {
 }
 
 export type FeatureConfigs = Partial<Record<ProposalType, FeatureConfig>>;
-
-export type FeatureCache = {blockNumber: number};
 
 export interface FeatureConfig {
   artifacts: CodeArtifact[];
@@ -32,8 +18,8 @@ export interface Market {
 }
 
 export const TokenMapping = {
-  [SupportedChain.Mainnet]: ['WETH', 'USDC', 'COMP', 'LINK', 'UNI', 'WBTC', 'RETH'],
-  [SupportedChain.Polygon]: ['LINK', 'WETH', 'WBTC', 'WMATIC'],
+  [SupportedChain.Mainnet]: MAINNET_KNOWN_ASSETS,
+  [SupportedChain.Polygon]: POLYGON_KNOWN_ASSETS,
   [SupportedChain.Arbitrum]: [],
   [SupportedChain.Base]: [],
   [SupportedChain.Optimism]: [],
@@ -41,6 +27,17 @@ export const TokenMapping = {
 
 export interface Options {
   force?: boolean;
+  market: Market;
+  title: string;
+  features: ProposalType[];
+  // automatically generated shortName from title
+  shortName: string;
+  author: string;
+  discussion: string;
+  date: string;
+}
+
+export interface ProposalSelections {
   market: Market;
   title: string;
   features: ProposalType[];
@@ -64,30 +61,6 @@ export interface AssetConfig {
 export interface MarketAndAssetConfig {
   market: Market;
   asset: AssetConfig;
-}
-
-export interface MarketInfo {
-  governor: string;
-  pauseGuardian: string;
-  baseToken: SupportedBaseAsset;
-  baseTokenPriceFeed: string;
-  extensionDelegate: string;
-  supplyKink: string;
-  supplyPerYearInterestRateSlopeLow: string;
-  supplyPerYearInterestRateSlopeHigh: string;
-  supplyPerYearInterestRateBase: string;
-  borrowKink: string;
-  borrowPerYearInterestRateSlopeLow: string;
-  borrowPerYearInterestRateSlopeHigh: string;
-  borrowPerYearInterestRateBase: string;
-  storeFrontPriceFactor: string;
-  trackingIndexScale: string;
-  baseTrackingSupplySpeed: string;
-  baseTrackingBorrowSpeed: string;
-  baseMinForRewards: string;
-  baseBorrowMin: string;
-  targetReserves: string;
-  assetConfigs: AssetConfig[];
 }
 
 export const AllMarkets: Market[] = [

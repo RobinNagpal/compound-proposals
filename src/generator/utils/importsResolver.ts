@@ -1,3 +1,4 @@
+import toUpperCamelCase from '../utils/toUpperCamelCase';
 import {Market} from '../types';
 
 /**
@@ -7,13 +8,15 @@ import {Market} from '../types';
  */
 let imports = '';
 export function prefixWithImports(market: Market, code: string, type: string = 'proposal' || 'test') {
+  const baseAssetName = toUpperCamelCase(market.baseAsset.toString());
+
   imports += `import {IConfigurator} from 'src/contracts/IConfigurator.sol';\n`;
   imports += `import {Structs} from 'src/contracts/structs.sol';\n`;
   imports += `import {GovernanceV3${market.chain}, GovernanceV3${market.chain}Assets} from 'src/contracts/compoundAddresses/GovernanceV3Mainnet.sol';\n`;
 
   if (type === 'proposal') {
     imports += `import {ICometProxyAdmin} from 'src/contracts/ICometProxyAdmin.sol';\n`;
-    imports += `import {${market.baseAsset}${market.chain}ProposalGenerator} from 'src/contracts/proposals/${market.baseAsset}${market.chain}ProposalGenerator.sol';\n`;
+    imports += `import {${baseAssetName}${market.chain}ProposalGenerator} from 'src/contracts/proposals/${baseAssetName}${market.chain}ProposalGenerator.sol';\n`;
   }
 
   if (type === 'test') {

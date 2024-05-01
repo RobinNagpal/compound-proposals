@@ -6,7 +6,7 @@ import {proposalTemplate} from './templates/proposal.template';
 // import {testTemplate} from './templates/test.template';
 
 import {confirm} from '@inquirer/prompts';
-import {ConfigFile, Options, FeatureConfigs, ProposalType} from './types';
+import {ConfigFile, Options, FeatureConfigs, ProposalType, ProposalSelections} from './types';
 import prettier from 'prettier';
 import {generateCIP} from './templates/cip.template';
 import {testTemplate} from './templates/test.template';
@@ -19,7 +19,7 @@ interface Files {
   proposals: FileInfo[];
 }
 
-export async function generateFiles(options: Options, featureConfigs: FeatureConfigs): Promise<Files> {
+export async function generateFiles(proposalSelections: ProposalSelections, featureConfigs: FeatureConfigs): Promise<Files> {
   const prettierSolCfg = await prettier.resolveConfig('foo.sol');
   const prettierMDCfg = await prettier.resolveConfig('foo.md');
 
@@ -27,29 +27,48 @@ export async function generateFiles(options: Options, featureConfigs: FeatureCon
 
   const proposals: FileInfo[] = [];
   for (const proposalType of selectedProposalTypes) {
-    const contractName = generateContractName(options, proposalType);
+    const contractName = generateContractName(proposalSelections, proposalType);
     const featureConfig = featureConfigs[proposalType]!;
-    const proposal = await prettier.format(proposalTemplate(options, featureConfig, proposalType), {
-      ...prettierSolCfg,
-      filepath: `foo.sol`,
-      parser: 'solidity-parse',
-    });
 
-    const test = await prettier.format(testTemplate(options, featureConfig, proposalType), {
-      ...prettierSolCfg,
-      filepath: `foo.sol`,
-      parser: 'solidity-parse',
-    });
+    const unformattedProposal = proposalTemplate(proposalSelections, featureConfig, proposalType);
+    let proposal = unformattedProposal;
+    try {
+      proposal = await prettier.format(unformattedProposal, {
+        ...prettierSolCfg,
+        filepath: `foo.sol`,
+        parser: 'solidity-parse',
+      });
+    } catch (e) {
+      console.error('Error formatting solidity proposal', e);
+    }
+
+    const unformattedTest = testTemplate(proposalSelections, featureConfig, proposalType);
+    let test = unformattedTest;
+    try {
+      test = await prettier.format(unformattedTest, {
+        ...prettierSolCfg,
+        filepath: `foo.sol`,
+        parser: 'solidity-parse',
+      });
+    } catch (e) {
+      console.error('Error formatting solidity test', e);
+    }
 
     proposals.push({proposal, test, contractName});
   }
 
-  console.log('generating script');
-  const scriptTemplate = generateScript(options, featureConfigs);
-  const script = await prettier.format(scriptTemplate, {...prettierSolCfg, filepath: 'foo.sol'});
+  console.log('generating all files');
+  const unformattedScriptTemplate = generateScript(proposalSelections, featureConfigs);
+  let script = unformattedScriptTemplate;
+  try {
+    script = await prettier.format(unformattedScriptTemplate, {...prettierSolCfg, filepath: 'foo.sol'});
+  } catch (e) {
+    console.error('Error formatting solidity script', e);
+  }
+
   console.log('generating cip');
   // const cip = 'Placeholder for CIP content';
-  const cip = await prettier.format(generateCIP(options, featureConfigs), {...prettierMDCfg, filepath: 'cip.md'});
+  const cip = await prettier.format(generateCIP(proposalSelections, featureConfigs), {...prettierMDCfg, filepath: 'cip.md'});
 
   return {script, cip, proposals};
 }
