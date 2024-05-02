@@ -1,5 +1,5 @@
 import {generateContractName, generateFolderName} from '../common';
-import {FeatureConfig, FeatureConfigs, Options, ProposalSelections} from '../types';
+import {FeatureConfig, FeatureConfigs, ProposalSelections} from '../types';
 import {prefixWithPragma} from '../utils/constants';
 import {prefixWithImports} from '../utils/importsResolver';
 

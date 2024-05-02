@@ -3,8 +3,6 @@ import path from 'path';
 import {generateScript} from './templates/script.template';
 import {generateContractName, generateFolderName} from './common';
 import {proposalTemplate} from './templates/proposal.template';
-// import {testTemplate} from './templates/test.template';
-
 import {confirm} from '@inquirer/prompts';
 import {ConfigFile, Options, FeatureConfigs, ProposalType, ProposalSelections} from './types';
 import prettier from 'prettier';
@@ -67,7 +65,6 @@ export async function generateFiles(proposalSelections: ProposalSelections, feat
   }
 
   console.log('generating cip');
-  // const cip = 'Placeholder for CIP content';
   const cip = await prettier.format(generateCIP(proposalSelections, featureConfigs), {...prettierMDCfg, filepath: 'cip.md'});
 
   return {script, cip, proposals};
