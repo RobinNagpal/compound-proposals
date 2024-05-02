@@ -2,7 +2,7 @@ import {select} from '@inquirer/prompts';
 import {numberPrompt} from '../prompts/numberPrompt';
 import {percentPrompt} from '../prompts/percentPrompt';
 import {AllMarkets, AssetConfig, CodeArtifact, FeatureModule, Market, MarketAndAssetConfig, Options, ProposalType, TokenMapping} from '../types';
-import {SupportedBaseAsset, SupportedChain} from './../compoudMarkets';
+import {SupportedBaseAsset, SupportedChain} from './../compoundMarkets';
 
 async function fetchAssetConfig(chain: SupportedChain): Promise<AssetConfig> {
   const asset = await selectToken(chain);

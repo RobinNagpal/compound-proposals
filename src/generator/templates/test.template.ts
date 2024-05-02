@@ -1,5 +1,5 @@
 import {generateContractName, getChainAlias} from '../common';
-import {Options, FeatureConfig, ProposalType, ProposalSelections} from '../types';
+import {FeatureConfig, ProposalType, ProposalSelections} from '../types';
 import {prefixWithPragma} from '../utils/constants';
 import {prefixWithImports} from '../utils/importsResolver';
 

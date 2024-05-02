@@ -1,4 +1,4 @@
-import {MAINNET_KNOWN_ASSETS, POLYGON_KNOWN_ASSETS, SupportedBaseAsset, SupportedChain} from './compoudMarkets';
+import {MAINNET_KNOWN_ASSETS, POLYGON_KNOWN_ASSETS, SupportedBaseAsset, SupportedChain} from './compoundMarkets';
 
 export enum ProposalType {
   AddAsset = 'AddAsset',
