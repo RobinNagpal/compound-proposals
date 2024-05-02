@@ -37,13 +37,13 @@ library GovernanceV3PolygonAssets {
   address internal constant SHIB_PRICE_FEED = 0x3710abeb1A0Fc7C2EC59C26c8DAA7a448ff6125A;
   uint8 internal constant SHIB_DECIMALS = 18;
 
-  address internal constant AVALANCHE_TOKEN = 0x2C89bbc92BD86F8075d1DEcc58C7F4E0107f286b;
-  address internal constant AVALANCHE_PRICE_FEED = 0xe01eA2fbd8D76ee323FbEd03eB9a8625EC981A10;
-  uint8 internal constant AVALANCHE_DECIMALS = 18;
+  address internal constant AVAX_TOKEN = 0x2C89bbc92BD86F8075d1DEcc58C7F4E0107f286b;
+  address internal constant AVAX_PRICE_FEED = 0xe01eA2fbd8D76ee323FbEd03eB9a8625EC981A10;
+  uint8 internal constant AVAX_DECIMALS = 18;
 
-  address internal constant UNISWAP_TOKEN = 0xb33eaad8d922b1083446dc23f610c2567fb5180f;
-  address internal constant UNISWAP_PRICE_FEED = 0xdf0Fb4e4F928d2dCB76f438575fDD8682386e13C;
-  uint8 internal constant UNISWAP_DECIMALS = 18;
+  address internal constant UNI_TOKEN = 0xb33eaad8d922b1083446dc23f610c2567fb5180f;
+  address internal constant UNI_PRICE_FEED = 0xdf0Fb4e4F928d2dCB76f438575fDD8682386e13C;
+  uint8 internal constant UNI_DECIMALS = 18;
 
   address internal constant AAVE_TOKEN = 0xd6df932a45c0f255f85145f286ea0b292b21c90b;
   address internal constant AAVE_PRICE_FEED = 0x72484B12719E23115761D5DA1646945632979bB6;
