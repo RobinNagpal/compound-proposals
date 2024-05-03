@@ -6,7 +6,8 @@ library GovernanceV3Mainnet {
   address internal constant TIMELOCK = 0x6d903f6003cca6255D85CcA4D3B5E5146dC33925;
 
   address internal constant NATIVE_USDC_COMET_PROXY = 0xc3d688B66703497DAA19211EEdff47f25384cdc3;
-  address internal constant NATIVE_USDC_COMET_PROXY_ADMIN = 0x1EC63B5883C3481134FD50D5DAebc83Ecd2E8779;
+  address internal constant NATIVE_USDC_COMET_PROXY_ADMIN =
+    0x1EC63B5883C3481134FD50D5DAebc83Ecd2E8779;
 
   address internal constant WETH_COMET_PROXY = 0xA17581A9E3356d9A858b789D68B4d866e593aE94;
   address internal constant WETH_COMET_PROXY_ADMIN = 0x1EC63B5883C3481134FD50D5DAebc83Ecd2E8779;
@@ -37,19 +38,15 @@ library GovernanceV3MainnetAssets {
   address internal constant RETH_PRICE_FEED = 0xA3A7fB5963D1d69B95EEC4957f77678EF073Ba08;
   uint8 internal constant RETH_DECIMALS = 18;
 
-   address internal constant BNB_TOKEN = 0xB8c77482e45F1F44dE1745F52C74426C631bDD52;
+  address internal constant BNB_TOKEN = 0xB8c77482e45F1F44dE1745F52C74426C631bDD52;
   address internal constant BNB_PRICE_FEED = 0x14e613AC84a31f709eadbdF89C6CC390fDc9540A;
   uint8 internal constant BNB_DECIMALS = 18;
 
-  address internal constant ARBITRUM_TOKEN = 0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1;
-  address internal constant ARBITRUM_PRICE_FEED = 0x31697852a68433DbCc2Ff612c516d69E3D9bd08F;
-  uint8 internal constant ARBITRUM_DECIMALS = 18;
-  
-  address internal constant UNISWAP_TOKEN = 0x1f9840a85d5af5bf1d1762f925bdaddc4201f984;
-  address internal constant UNISWAP_PRICE_FEED = 0x553303d460EE0afB37EdFf9bE42922D8FF63220e;
-  uint8 internal constant UNISWAP_DECIMALS = 18;
-  
-  address internal constant STETH_TOKEN = 0xae7ab96520de3a18e5e111b5eaab095312d7fe84;
+  address internal constant ARB_TOKEN = 0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1;
+  address internal constant ARB_PRICE_FEED = 0x31697852a68433DbCc2Ff612c516d69E3D9bd08F;
+  uint8 internal constant ARB_DECIMALS = 18;
+
+  address internal constant STETH_TOKEN = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
   address internal constant STETH_PRICE_FEED = 0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8;
   uint8 internal constant STETH_DECIMALS = 18;
 }
