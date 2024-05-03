@@ -48,7 +48,7 @@ library GovernanceV3PolygonAssets {
   address internal constant AAVE_TOKEN = 0xD6DF932A45C0f255f85145f286eA0b292B21C90B;
   address internal constant AAVE_PRICE_FEED = 0x72484B12719E23115761D5DA1646945632979bB6;
   uint8 internal constant AAVE_DECIMALS = 18;
-  
+
   address internal constant MATIC_TOKEN = 0x0000000000000000000000000000000000001010;
   address internal constant MATIC_PRICE_FEED = 0xAB594600376Ec9fD91F8e885dADF0CE036862dE0;
   uint8 internal constant MATIC_DECIMALS = 18;
