@@ -9,87 +9,59 @@ import 'forge-std/Script.sol';
 import {CommonTestBase} from 'src/contracts/CommonTestBase.sol';
 import {IConfigurator} from 'src/contracts/IConfigurator.sol';
 import {IGovernanceBravo} from 'src/contracts/IGovernanceBravo.sol';
+import {IComp} from 'src/contracts/IComp.sol';
 import {VmSafe} from 'forge-std/Vm.sol';
 import 'forge-std/Test.sol';
 import {IProposalGenerator} from 'src/contracts/proposals/IProposalGenerator.sol';
 import 'src/contracts/structs.sol';
 import {GovernanceV3MainnetAssets, GovernanceV3Mainnet} from '../../contracts/compoundAddresses/GovernanceV3Mainnet.sol';
-import {GovernanceV3} from '../../contracts/compoundAddresses/GovernanceV3.sol';
+import {GovernanceV3} from 'src/contracts/compoundAddresses/GovernanceV3.sol';
 import {EthereumScript} from 'src/contracts/ScriptUtils.sol';
-
-/**
- * @dev Deploy Ethereum
- * deploy-command: make deploy-ledger contract=src/20240125_AaveV3Ethereum_AddPYUSDToAaveV3EthereumMarket/AddPYUSDToAaveV3EthereumMarket_20240125.s.sol:DeployEthereum chain=mainnet
- * verify-command: npx catapulta-verify -b broadcast/AddPYUSDToAaveV3EthereumMarket_20240125.s.sol/1/run-latest.json
- */
-// contract DeployEthereum is EthereumScript {
-//   function run() external broadcast {
-//     // deploy payloads
-//     address payload0 = GovV3Helpers.deployDeterministic(
-//       type(AaveV3Ethereum_AddPYUSDToAaveV3EthereumMarket_20240125).creationCode
-//     );
-
-//     // compose action
-//     IPayloadsControllerCore.ExecutionAction[]
-//       memory actions = new IPayloadsControllerCore.ExecutionAction[](1);
-//     actions[0] = GovV3Helpers.buildAction(payload0);
-
-//     // register action at payloadsController
-//     GovV3Helpers.createPayload(actions);
-//   }
-// }
-
-/**
- * @dev Create Proposal
- * command: make deploy-ledger contract=src/20240125_AaveV3Ethereum_AddPYUSDToAaveV3EthereumMarket/AddPYUSDToAaveV3EthereumMarket_20240125.s.sol:CreateProposal chain=mainnet
- */
-// contract CreateProposal is EthereumScript {
-//   function run() external {
-//     // create payloads
-//     PayloadsControllerUtils.Payload[] memory payloads = new PayloadsControllerUtils.Payload[](1);
-
-//     // compose actions for validation
-//     IPayloadsControllerCore.ExecutionAction[]
-//       memory actionsEthereum = new IPayloadsControllerCore.ExecutionAction[](1);
-//     actionsEthereum[0] = GovV3Helpers.buildAction(
-//       type(AaveV3Ethereum_AddPYUSDToAaveV3EthereumMarket_20240125).creationCode
-//     );
-//     payloads[0] = GovV3Helpers.buildMainnetPayload(vm, actionsEthereum);
-
-//     // create proposal
-//     vm.startBroadcast();
-//     GovV3Helpers.createProposal(
-//       vm,
-//       payloads,
-//       GovV3Helpers.ipfsHashFile(
-//         vm,
-//         'src/20240125_AaveV3Ethereum_AddPYUSDToAaveV3EthereumMarket/AddPYUSDToAaveV3EthereumMarket.md'
-//       )
-//     );
-//   }
-// }
 
 contract Add is EthereumScript {
   AddAsset_Add_rETH_WETH_Mainnet_20240412 internal proposal;
   IGovernanceBravo governor;
+    IComp comp;
 
+  string public lastRevertReason;
+  // address constant PROPOSER = 0xeaa0ba6e410c6ba5c4a186544161cd4a7d0b12cd;
+  address compAddress = 0xc00e94Cb662C3520282E6f5717214004A7f26888; // Replace with the Comp address
+
+  event RevertReason(string reason);
   function setUp() public {
+    // vm.createSelectFork(vm.rpcUrl('mainnet'));
     proposal = new AddAsset_Add_rETH_WETH_Mainnet_20240412();
     governor = IGovernanceBravo(GovernanceV3.GOVERNOR_BRAVO);
+    comp = IComp(compAddress);
+
   }
 
   function run() public {
     Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
-    vm.startBroadcast();
-    governor.propose(
-      proposalInfo.targets,
-      proposalInfo.values,
-      proposalInfo.signatures,
-      proposalInfo.calldatas,
-      './AddAsset_Add_rETH_WETH_Mainnet_20240412.md'
-    );
+    vm.startBroadcast(msg.sender);
+    // console.log("Block number: ", block.number);
 
-    vm.stopBroadcast();
+    // bool whitelisted = governor.isWhitelisted(msg.sender);
+    // console.log("isWhitelisted: ", whitelisted);
+
+    // uint96 votes = comp.getCurrentVotes(PROPOSER);
+    // console.log("Votes: ", votes);
+    try
+      governor.propose(
+        proposalInfo.targets,
+        proposalInfo.values,
+        proposalInfo.signatures,
+        proposalInfo.calldatas,
+        'dawdawd'
+      )
+    {
+      vm.stopBroadcast();
+    } catch Error(string memory reason) {
+      lastRevertReason = reason;
+      emit RevertReason(reason);
+    } catch (bytes memory) {
+      lastRevertReason = 'Unknown error occurred';
+      emit RevertReason('Unknown error occurred');
+    }
   }
-
 }
