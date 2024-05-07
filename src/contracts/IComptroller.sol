@@ -5,4 +5,5 @@ interface IComptroller {
   function markets(
     address cToken
   ) external view returns (bool isListed, uint collateralFactorMantissa, bool isComped);
+  function _grantComp(address recipient, uint amount) external;
 }
