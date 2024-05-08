@@ -41,8 +41,10 @@ contract Add is EthereumScript {
     vm.startBroadcast(msg.sender);
     // console.log("Block number: ", block.number);
 
-    // bool whitelisted = governor.isWhitelisted(msg.sender);
-    // console.log("isWhitelisted: ", whitelisted);
+    console.log("msg.sender: ", msg.sender);
+
+     bool whitelisted = governor.isWhitelisted(msg.sender);
+     console.log("isWhitelisted: ", whitelisted);
 
     // uint96 votes = comp.getCurrentVotes(PROPOSER);
     // console.log("Votes: ", votes);
@@ -56,6 +58,8 @@ contract Add is EthereumScript {
       )
     {
       vm.stopBroadcast();
+
+      console.log("Proposal created successfully");
     } catch Error(string memory reason) {
       lastRevertReason = reason;
       emit RevertReason(reason);
