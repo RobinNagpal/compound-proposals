@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "generate": "tsx src/generator/cli",
+    "generate-summary": "tsx src/generator/utils/extract",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {

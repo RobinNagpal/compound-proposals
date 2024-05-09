@@ -16,7 +16,7 @@ export const proposalTemplate = (proposalSelections: ProposalSelections, feature
     .filter((f) => f !== undefined)
     .join('\n');
 
-  const contract = `/**
+  const template = `/**
   * @title ${title || 'TODO'}
   * @author ${author || 'TODO'}
   * - Discussion: ${discussion || 'TODO'}
@@ -26,5 +26,5 @@ export const proposalTemplate = (proposalSelections: ProposalSelections, feature
    ${functions}
  }`;
 
-  return prefixWithPragma(prefixWithImports(proposalSelections.market, contract, 'proposal'));
+  return prefixWithPragma(prefixWithImports(proposalSelections.market, template, 'proposal'));
 };
