@@ -1,12 +1,10 @@
-import {generateContractName} from '../common';
 import {FeatureConfig, ProposalSelections, ProposalType} from '../types';
 import {prefixWithPragma} from '../utils/constants';
 import {prefixWithImports} from '../utils/importsResolver';
 import toUpperCamelCase from '../utils/toUpperCamelCase';
 
-export const proposalTemplate = (proposalSelections: ProposalSelections, featureConfig: FeatureConfig, proposalType: ProposalType) => {
+export const proposalTemplate = (proposalSelections: ProposalSelections, featureConfig: FeatureConfig, contractName: string) => {
   const {title, author, discussion} = proposalSelections;
-  const contractName = generateContractName(proposalSelections, proposalType);
 
   const {chain, baseAsset} = proposalSelections.market;
 

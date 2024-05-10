@@ -71,8 +71,9 @@ async function runCLI() {
           artifacts: [codeArtifact],
         },
       },
+      selectedProposalConfig,
     );
-    await writeFiles(options, files);
+    await writeFiles(options, files, selectedProposalConfig);
   } catch (e) {
     console.log('Error: ', e);
     throw e;

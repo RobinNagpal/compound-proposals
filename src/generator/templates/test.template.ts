@@ -1,11 +1,8 @@
-import {generateContractName, getChainAlias} from '../common';
-import {FeatureConfig, ProposalType, ProposalSelections} from '../types';
+import {FeatureConfig, ProposalSelections} from '../types';
 import {prefixWithPragma} from '../utils/constants';
 import {prefixWithImports} from '../utils/importsResolver';
 
-export const testTemplate = (proposalSelections: ProposalSelections, featureConfig: FeatureConfig, proposalType: ProposalType) => {
-  const contractName = generateContractName(proposalSelections, proposalType);
-
+export const testTemplate = (proposalSelections: ProposalSelections, featureConfig: FeatureConfig, contractName: string) => {
   const chain = proposalSelections.market.chain;
 
   const functions = featureConfig.artifacts

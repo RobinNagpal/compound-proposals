@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import {generateScript} from './templates/script.template';
-import {generateContractName, generateFolderName, writeFile} from './common';
+import {generateFolderName, generateProposalName, writeFile} from './common';
 import {proposalTemplate} from './templates/proposal.template';
 import {confirm} from '@inquirer/prompts';
-import {ConfigFile, Options, FeatureConfigs, ProposalType, ProposalSelections} from './types';
+import {ConfigFile, Options, FeatureConfigs, ProposalType, ProposalSelections, MarketAndAssetConfig} from './types';
 import prettier from 'prettier';
 import {generateCIP} from './templates/cip.template';
 import {testTemplate} from './templates/test.template';
@@ -17,18 +17,22 @@ interface Files {
   proposals: FileInfo[];
 }
 
-export async function generateFiles(proposalSelections: ProposalSelections, featureConfigs: FeatureConfigs): Promise<Files> {
+export async function generateFiles(
+  proposalSelections: ProposalSelections,
+  featureConfigs: FeatureConfigs,
+  marketAndAssetConfig: MarketAndAssetConfig,
+): Promise<Files> {
   const prettierSolCfg = await prettier.resolveConfig('foo.sol');
   const prettierMDCfg = await prettier.resolveConfig('foo.md');
 
   const selectedProposalTypes = Object.keys(featureConfigs) as ProposalType[];
 
+  const contractName = generateProposalName(proposalSelections, marketAndAssetConfig);
   const proposals: FileInfo[] = [];
   for (const proposalType of selectedProposalTypes) {
-    const contractName = generateContractName(proposalSelections, proposalType);
     const featureConfig = featureConfigs[proposalType]!;
 
-    const unformattedProposal = proposalTemplate(proposalSelections, featureConfig, proposalType);
+    const unformattedProposal = proposalTemplate(proposalSelections, featureConfig, contractName);
     let proposal = unformattedProposal;
     try {
       proposal = await prettier.format(unformattedProposal, {
@@ -40,7 +44,7 @@ export async function generateFiles(proposalSelections: ProposalSelections, feat
       console.error('Error formatting solidity proposal', e);
     }
 
-    const unformattedTest = testTemplate(proposalSelections, featureConfig, proposalType);
+    const unformattedTest = testTemplate(proposalSelections, featureConfig, contractName);
     let test = unformattedTest;
     try {
       test = await prettier.format(unformattedTest, {
@@ -52,7 +56,7 @@ export async function generateFiles(proposalSelections: ProposalSelections, feat
       console.error('Error formatting solidity test', e);
     }
 
-    const unformattedScriptTemplate = generateScript(proposalSelections, proposalType);
+    const unformattedScriptTemplate = generateScript(proposalSelections, contractName);
     let script = unformattedScriptTemplate;
     try {
       script = await prettier.format(unformattedScriptTemplate, {...prettierSolCfg, filepath: 'foo.sol'});
@@ -62,7 +66,7 @@ export async function generateFiles(proposalSelections: ProposalSelections, feat
     proposals.push({proposal, test, script, contractName});
   }
 
-  const cip = await prettier.format(generateCIP(proposalSelections, featureConfigs), {...prettierMDCfg, filepath: 'cip.md'});
+  const cip = await prettier.format(generateCIP(proposalSelections, featureConfigs, contractName), {...prettierMDCfg, filepath: 'cip.md'});
   console.log('generating all files');
 
   return {cip, proposals};
@@ -77,7 +81,7 @@ async function askBeforeWrite(options: Options, filePath: string, content: strin
     if (!force) return;
   }
 
-  await fs.writeFileSync(filePath, content);
+  fs.writeFileSync(filePath, content);
 }
 
 /**
@@ -85,7 +89,7 @@ async function askBeforeWrite(options: Options, filePath: string, content: strin
  * @param options
  * @param param1
  */
-export async function writeFiles(options: Options, {cip, proposals}: Files): Promise<void> {
+export async function writeFiles(options: Options, {cip, proposals}: Files, marketAndAssetConfig: MarketAndAssetConfig): Promise<void> {
   const baseName = generateFolderName(options);
   const baseFolder = path.join(process.cwd(), 'src/proposals', baseName);
 
@@ -101,7 +105,7 @@ export async function writeFiles(options: Options, {cip, proposals}: Files): Pro
     fs.mkdirSync(baseFolder, {recursive: true});
   }
 
-  const contractName = generateContractName(options);
+  const contractName = generateProposalName(options, marketAndAssetConfig);
   await askBeforeWrite(options, path.join(baseFolder, `${contractName}.md`), cip);
 
   const summary = await generateSummary(contractName, cip);
