@@ -1,5 +1,5 @@
 import {arbitrum, avalanche, base, mainnet, metis, optimism, polygon, scroll} from 'viem/chains';
-import {Options, ProposalType} from './types';
+import {MarketAndAssetConfig, Options, ProposalType} from './types';
 import fs from 'fs';
 
 export function getDate() {
@@ -19,17 +19,8 @@ export function generateFolderName(options: Options) {
   return `${options.date}_${options.features.length === 1 ? options.features[0] : 'Multi'}_${options.shortName}`;
 }
 
-/**
- * Suffix with the date as prefixing would generate invalid contract names
- * @param {*} options
- * @param {*} proposalType
- * @returns
- */
-export function generateContractName(options: Options, proposalType?: ProposalType) {
-  let name = proposalType ? `${proposalType}_` : '';
-  name += `${options.shortName}`;
-  name += `_${options.date}`;
-  return name;
+export function generateProposalName(options: Options, marketAndAssetConfig: MarketAndAssetConfig) {
+  return `${options.shortName}_${marketAndAssetConfig.asset.asset.split('_')[0]}_${marketAndAssetConfig.market.chain}_${options.date}`;
 }
 
 export function getChainAlias(chain: string) {
