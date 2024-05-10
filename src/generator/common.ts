@@ -1,5 +1,6 @@
 import {arbitrum, avalanche, base, mainnet, metis, optimism, polygon, scroll} from 'viem/chains';
 import {Options, ProposalType} from './types';
+import fs from 'fs';
 
 export function getDate() {
   const date = new Date();
@@ -57,4 +58,22 @@ export const CHAIN_TO_CHAIN_ID = {
 
 export function flagAsRequired(message: string, required?: boolean) {
   return required ? `${message}*` : message;
+}
+
+export function readFile(filePath: string) {
+  try {
+    return fs.readFileSync(filePath, 'utf8');
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+export function writeFile(filePath: string, content: string) {
+  try {
+    fs.writeFileSync(`${filePath}`, content);
+    console.log(`File created at ${filePath}`);
+  } catch (err) {
+    console.error(err);
+  }
 }
