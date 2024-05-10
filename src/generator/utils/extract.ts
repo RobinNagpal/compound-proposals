@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import {prefixWithPragma} from './constants';
-import prettier from 'prettier';
+import {generateSummary} from '../templates/summary.template';
+import {readFile, writeFile} from '../common';
 
-async function generateProposal(filePath: string) {
+async function generateSummaryProposal(filePath: string) {
   const basePath = path.join(process.cwd(), filePath);
 
   console.log(basePath);
@@ -13,49 +13,12 @@ async function generateProposal(filePath: string) {
 
   const folderPath = path.dirname(basePath);
   const fileName = path.basename(filePath, '.md');
-  const mdContent = readMdFile(basePath) ?? '';
+  const mdContent = readFile(basePath) ?? '';
 
-  const summary = mdContent;
-
-  const summarySolTemplate = `
-    contract ${fileName}_Summary {
-        string private summary = ${JSON.stringify(summary)};
-
-        function getSummary() public view returns (string memory) {
-            return summary;
-          }
-    }
-    `;
-
-  let summaryProposal = prefixWithPragma(summarySolTemplate);
-  const prettierSolCfg = await prettier.resolveConfig('foo.sol');
-  try {
-    summaryProposal = await prettier.format(summaryProposal, {
-      ...prettierSolCfg,
-      filepath: `foo.sol`,
-      parser: 'solidity-parse',
-    });
-  } catch (e) {
-    console.error('Error formatting solidity proposal', e);
-  }
-
+  const summary = await generateSummary(fileName, mdContent);
   const solFilePath = path.join(folderPath, `${fileName}_Summary.sol`);
 
-  try {
-    fs.writeFileSync(`${solFilePath}`, summaryProposal);
-    console.log(`Summary proposal created at ${solFilePath}`);
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-function readMdFile(filePath: string) {
-  try {
-    return fs.readFileSync(filePath, 'utf8');
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
+  writeFile(solFilePath, summary);
 }
 
 function extractSection(mdContent: string, sectionTitle: string): string {
@@ -73,8 +36,8 @@ function extractSection(mdContent: string, sectionTitle: string): string {
 
 const filePath = process.argv[2];
 if (!filePath) {
-  console.error('Please provide a folder path as an argument.');
+  console.error('Please provide a file path as an argument.');
   process.exit(1);
 }
 
-generateProposal(filePath).catch(console.error);
+generateSummaryProposal(filePath).catch(console.error);
