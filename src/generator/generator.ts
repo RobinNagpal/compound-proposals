@@ -1,13 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import {generateScript} from './templates/script.template';
-import {generateContractName, generateFolderName} from './common';
+import {generateContractName, generateFolderName, writeFile} from './common';
 import {proposalTemplate} from './templates/proposal.template';
 import {confirm} from '@inquirer/prompts';
 import {ConfigFile, Options, FeatureConfigs, ProposalType, ProposalSelections} from './types';
 import prettier from 'prettier';
 import {generateCIP} from './templates/cip.template';
 import {testTemplate} from './templates/test.template';
+import {generateSummary} from './templates/summary.template';
 
 type FileInfo = {proposal: string; test: string; script: string; contractName: string};
 
@@ -76,7 +77,7 @@ async function askBeforeWrite(options: Options, filePath: string, content: strin
     if (!force) return;
   }
 
-  fs.writeFileSync(filePath, content);
+  await fs.writeFileSync(filePath, content);
 }
 
 /**
@@ -99,7 +100,12 @@ export async function writeFiles(options: Options, {cip, proposals}: Files): Pro
   } else {
     fs.mkdirSync(baseFolder, {recursive: true});
   }
-  await askBeforeWrite(options, path.join(baseFolder, `${generateContractName(options)}.md`), cip);
+
+  const contractName = generateContractName(options);
+  await askBeforeWrite(options, path.join(baseFolder, `${contractName}.md`), cip);
+
+  const summary = await generateSummary(contractName, cip);
+  writeFile(path.join(baseFolder, `${contractName}_Summary.sol`), summary);
 
   for (const {proposal, test, script, contractName} of proposals) {
     await askBeforeWrite(options, path.join(baseFolder, `${contractName}.s.sol`), script);
