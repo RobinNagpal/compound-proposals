@@ -16,7 +16,9 @@ export const proposalTemplate = (proposalSelections: ProposalSelections, feature
     .filter((f) => f !== undefined)
     .join('\n');
 
-  const template = `/**
+  let template = '';
+  template += `import {${contractName}} from './${contractName}.sol';\n`;
+  template += `/**
   * @title ${title || 'TODO'}
   * @author ${author || 'TODO'}
   * - Discussion: ${discussion || 'TODO'}

@@ -1,16 +1,18 @@
 import {generateContractName, generateFolderName} from '../common';
-import {FeatureConfig, FeatureConfigs, ProposalSelections} from '../types';
+import {FeatureConfig, FeatureConfigs, ProposalSelections, ProposalType} from '../types';
 import {prefixWithPragma} from '../utils/constants';
 import {prefixWithImports} from '../utils/importsResolver';
 
-export function generateScript(proposalSelections: ProposalSelections, featureConfig: FeatureConfigs) {
+export function generateScript(proposalSelections: ProposalSelections, proposalType: ProposalType) {
   const folderName = generateFolderName(proposalSelections);
-  const contractName = generateContractName(proposalSelections);
+  const contractName = generateContractName(proposalSelections, proposalType);
+  const baseContractName = generateContractName(proposalSelections);
   let chain = proposalSelections.market.chain === 'Mainnet' ? 'Ethereum' : proposalSelections.market.chain;
   let template = '';
   // generate imports
   template += `import {${chain}Script} from 'src/contracts/ScriptUtils.sol';\n`;
   template += `import {${contractName}} from './${contractName}.sol';\n`;
+  template += `import {${baseContractName}_Summary} from './${baseContractName}_Summary.sol';\n`;
 
   // generate proposal creation script
   template += `/**
@@ -19,16 +21,20 @@ export function generateScript(proposalSelections: ProposalSelections, featureCo
  */
 
 contract CreateProposal is ${chain}Script {
-  AddAsset_Add_rETH_WETH_Mainnet_20240412 internal proposal;
+  ${contractName} internal proposal;
+  ${baseContractName}_Summary internal description;
+
   IGovernanceBravo governor;
 
   function setUp() public {
     proposal = new ${contractName}();
+    description = new ${baseContractName}_Summary();
     governor = IGovernanceBravo(GovernanceV3.GOVERNOR_BRAVO);
   }
 
   function run() external {
     Structs.ProposalInfo memory proposalInfo = proposal.createProposalPayload();
+    string memory summary = description.getSummary();
     vm.startBroadcast(msg.sender);
 
     try
@@ -37,7 +43,7 @@ contract CreateProposal is ${chain}Script {
         proposalInfo.values,
         proposalInfo.signatures,
         proposalInfo.calldatas,
-        'Description'
+        summary
       )
     {
       vm.stopBroadcast();
