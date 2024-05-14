@@ -16,7 +16,7 @@ export function generateScript(proposalSelections: ProposalSelections, contractN
   // generate proposal creation script
   template += `/**
  * @dev Create Proposal
- * command: make deploy-ledger contract=src/${folderName}/${contractName}.s.sol:CreateProposal chain=mainnet
+ * command: make deploy-ledger contract=src/${folderName}/${contractName}.s.sol:CreateProposal chain=${chain}
  */
 
 contract CreateProposal is ${chain}Script {
