@@ -67,7 +67,7 @@ export async function generateFiles(
   }
 
   const cip = await prettier.format(generateCIP(proposalSelections, featureConfigs, contractName), {...prettierMDCfg, filepath: 'cip.md'});
-  console.log('generating all files');
+  console.log('Generating all files for the proposal');
 
   return {cip, proposals};
 }

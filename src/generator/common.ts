@@ -63,7 +63,6 @@ export function readFile(filePath: string) {
 export function writeFile(filePath: string, content: string) {
   try {
     fs.writeFileSync(`${filePath}`, content);
-    console.log(`File created at ${filePath}`);
   } catch (err) {
     console.error(err);
   }
