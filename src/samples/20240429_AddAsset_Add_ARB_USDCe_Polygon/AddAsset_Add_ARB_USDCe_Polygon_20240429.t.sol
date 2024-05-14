@@ -28,7 +28,7 @@ contract AddAsset_Add_ARB_USDCe_Polygon_20240429_Test is CommonTestBase {
   function isAssetListed() internal returns (bool) {
     try
       configurator.getAssetIndex(
-        GovernanceV3Polygon.USDCE_COMET_PROXY,
+        GovernanceV3Polygon.BRIDGED_USDC_COMET_PROXY,
         GovernanceV3PolygonAssets.LINK_TOKEN
       )
     returns (uint256 assetIndex) {
