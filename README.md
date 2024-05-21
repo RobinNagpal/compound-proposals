@@ -1,43 +1,43 @@
 # Compound Proposal CLI
 
-# Introduction
+## Introduction
 
 Creating proposals for the Compound protocol manually can lead to various errors such as incorrect addresses for Compound markets and assets, as well as issues with the precision of values. Additionally, the current process requires cross-team reviews only after proposals have been added to the blockchain, with limited tooling available for pre-submission review.
 
 Moreover, there are almost no publicly verifiable tests or simulations to assess the impact of proposals before they are executed on-chain. This makes it challenging to identify and correct issues early, potentially resulting in failed proposals and wasted resources.
 
-# Compound CLI Benefits
+## Compound CLI Benefits
 
 Compound CLI tool addresses these issues by automating the proposal creation process, offering the following benefits:
 
-- Reduces Human Errors: Automates the generation of proposal files, minimizing the risk of incorrect addresses and value precision issues.
-- Enables Pre-Submission Testing: Generates testing files and scripts to verify the correctness and simulate the execution of proposals.
-- Streamlines the Process: Creates a more efficient and reliable proposal process, from creation to on-chain submission.
+- **Reduces Human Errors**: Automates the generation of proposal files, minimizing the risk of incorrect addresses and value precision issues.
+- **Enables Pre-Submission Testing**: Generates testing files and scripts to verify the correctness and simulate the execution of proposals.
+- **Streamlines the Process**: Creates a more efficient and reliable proposal process, from creation to on-chain submission.
 
 ## Features
 
-- Proposal File Generation: Creates a proposal file with all the required information.
-- Testing File Generation: Generates a testing file to verify the correctness of the proposal using Foundry.
-- Simulation Script Generation: Produces a script to simulate the proposal execution on a forked network, allowing you to observe the effects on the main chain.
-- README Generation: Automatically generates a README file for the proposal.
+- **Proposal File Generation**: Creates a proposal file with all the required information.
+- **Testing File Generation**: Generates a testing file to verify the correctness of the proposal using Foundry.
+- **Simulation Script Generation**: Produces a script to simulate the proposal execution on a forked network, allowing you to observe the effects on the main chain.
+- **README Generation**: Automatically generates a README file for the proposal.
 
 ## How It Works
 
 After running the tool, the user is guided through a series of prompts and input fields on the CLI to get all the necessary data required for the proposal.
 
-1. Initial Prompt:
+1. **Initial Prompt**:
 
    The user is prompted with a menu of options to choose from, such as "Add an Asset."
 
-2. Select Chain:
+2. **Select Chain**:
 
    The user selects the chain for which the proposal will be generated. Options include mainnet, polygon, etc.
 
-3. Base Asset Selection:
+3. **Base Asset Selection**:
 
    The user is asked to choose the base asset of the market, with options like Native USDC or WETH, depending upon the chosen market.
 
-4. Detailed Prompts Based on Initial Selection:
+4. **Proposal Details Prompts Based on Previous Selections**:
 
 - The user is then asked specific questions related to their initial selection.
 - For example, if the user chooses "Add an Asset":
@@ -48,7 +48,7 @@ After running the tool, the user is guided through a series of prompts and input
     - Liquidation Factor
     - Supply Cap
 
-5. Proposal Details:
+5. **Proposal Details**:
 
    Finally, the user is asked to provide additional details for the proposal:
 
@@ -56,7 +56,7 @@ After running the tool, the user is guided through a series of prompts and input
    - Name of the Author
    - Link to the Forum Discussion (optional)
 
-6. File Generation:
+6. **Files Generation**:
 
    After entering all the required values, the tool generates all the necessary files which includes:
 
@@ -65,7 +65,7 @@ After running the tool, the user is guided through a series of prompts and input
    - Simulation script
    - README file
 
-7. Executing Tests and Scripts:
+7. **Executing Tests and Scripts**:
 
    The user can then use the commands provided in the `Makefile` to execute the tests and the simulation script.
 
@@ -73,12 +73,12 @@ After running the tool, the user is guided through a series of prompts and input
 
 For running the scripts onchain, hardware wallet can also be used by running the appropriate command from the `Makefile` and passing in the required values like path to the script file. The `.env` file has to be configured with the values required for deployment via ledger i.e., MNEMONIC_INDEX and LEDGER_SENDER
 
-### Installation and Setup
+## Installation and Setup
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com
+   git clone https://github.com/RobinNagpal/compound-proposals.git
    ```
 
 2. Install the dependencies:
@@ -96,11 +96,6 @@ For running the scripts onchain, hardware wallet can also be used by running the
    ```
 
 5. Follow the prompts to generate the proposal files.
-
-# Conclusion
-
-This tool provides a simple and efficient way to generate proposal files for the DAO. It allows users to easily enter the required values and generate all the necessary
-files for the proposal, testing, and simulation. By automating the proposal creation process, the tool reduces the risk of human errors and streamlines the proposal submission process. It also enables users to test and simulate the proposal before submitting it on-chain, providing a more reliable and efficient way to create and execute proposals for the Compound protocol.
 
 ### Running the test
 
@@ -144,4 +139,84 @@ To execute the script using a hardware wallet like ledger, first setup the mnemo
 
 ```bash
 make run_script_ledger SCRIPT_PATH=src/proposals/new_script_path/new_script.s.sol:NewScript
+```
+
+## Conclusion
+
+This tool provides a simple and efficient way to generate proposal files for the DAO. It allows users to easily enter the required values and generate all the necessary
+files for the proposal, testing, and simulation. By automating the proposal creation process, the tool reduces the risk of human errors and streamlines the proposal submission process. It also enables users to test and simulate the proposal before submitting it on-chain, providing a more reliable and efficient way to create and execute proposals for the Compound protocol.
+
+## Foundry
+
+Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust. Our Compound CLI tool uses foundry for proposal creation, running tests and scripts.
+
+Foundry consists of:
+
+- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
+- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
+- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
+- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+
+### Documentation
+
+https://book.getfoundry.sh/
+
+### Usage
+
+#### Build
+
+```bash
+forge build
+```
+
+#### Test
+
+```bash
+forge test
+```
+
+#### Format
+
+```bash
+forge fmt
+```
+
+#### Gas Snapshots
+
+```bash
+forge snapshot
+```
+
+#### Anvil
+
+```bash
+anvil --chain-id <id>
+```
+
+#### Deploy
+
+For onchain deployment
+
+```bash
+forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key> --sender <sender_address> --broadcast
+```
+
+For local anvil deployment
+
+```bash
+forge script script/Counter.s.sol:CounterScript --fork-url http://localhost:8545 --private-key <your_private_key> --sender <sender_address> --broadcast
+```
+
+### Cast
+
+```bash
+cast <subcommand>
+```
+
+### Help
+
+```bash
+forge --help
+anvil --help
+cast --help
 ```
