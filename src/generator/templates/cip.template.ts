@@ -1,7 +1,7 @@
-import {generateContractName, generateFolderName} from '../common';
+import {generateFolderName} from '../common';
 import {Options, FeatureConfigs} from '../types';
 
-export function generateCIP(options: Options, configs: FeatureConfigs) {
+export function generateCIP(options: Options, configs: FeatureConfigs, contractName: string) {
   return `---
 title: ${`"${options.title}"` || 'TODO'}
 author: ${`"${options.author}"` || 'TODO'}
@@ -24,20 +24,10 @@ ${Object.keys(configs)
 ## References
 
 - Implementation: ${options.features
-    .map(
-      (feature) =>
-        `[${feature}](https://github.com/RobinNagpal/compound-proposals/blob/main/src/${generateFolderName(
-          options,
-        )}/${generateContractName(options, feature)}.sol)`,
-    )
+    .map((feature) => `[${feature}](https://github.com/RobinNagpal/compound-proposals/blob/main/src/${generateFolderName(options)}/${contractName}.sol)`)
     .join(', ')}
 - Tests: ${options.features
-    .map(
-      (feature) =>
-        `[${feature}](https://github.com/RobinNagpal/compound-proposals/blob/main/src/${generateFolderName(
-          options,
-        )}/${generateContractName(options, feature)}.t.sol)`,
-    )
+    .map((feature) => `[${feature}](https://github.com/RobinNagpal/compound-proposals/blob/main/src/${generateFolderName(options)}/${contractName}.t.sol)`)
     .join(', ')}
 
 - [Discussion](${options.discussion || 'TODO'})

@@ -10,8 +10,8 @@ abstract contract BridgedUsdcPolygonProposalGenerator is
   ProposalGenerator(
     MarketConfig({
       configuratorProxy: address(GovernanceV3Polygon.CONFIGURATOR_PROXY),
-      cometProxy: address(GovernanceV3Polygon.USDCE_COMET_PROXY),
-      cometProxyAdmin: address(GovernanceV3Polygon.USDCE_COMET_PROXY_ADMIN)
+      cometProxy: address(GovernanceV3Polygon.BRIDGED_USDC_COMET_PROXY),
+      cometProxyAdmin: address(GovernanceV3Polygon.BRIDGED_USDC_COMET_PROXY_ADMIN)
     })
   )
 {

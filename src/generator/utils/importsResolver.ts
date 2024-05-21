@@ -15,14 +15,14 @@ export function prefixWithImports(market: Market, code: string, type: string = '
     imports += `import {IConfigurator} from 'src/contracts/IConfigurator.sol';\n`;
     imports += `import {ICometProxyAdmin} from 'src/contracts/ICometProxyAdmin.sol';\n`;
     imports += `import {${baseAssetName}${market.chain}ProposalGenerator} from 'src/contracts/proposals/${baseAssetName}${market.chain}ProposalGenerator.sol';\n`;
-    imports += `import {GovernanceV3${market.chain}Assets} from 'src/contracts/compoundAddresses/GovernanceV3Mainnet.sol';\n`;
+    imports += `import {GovernanceV3${market.chain}Assets} from 'src/contracts/compoundAddresses/GovernanceV3${market.chain}.sol';\n`;
   } else if (type === 'test') {
     imports += `import {IConfigurator} from 'src/contracts/IConfigurator.sol';\n`;
     imports += `import {CommonTestBase} from 'src/contracts/CommonTestBase.sol';\n`;
     imports += `import 'src/contracts/proposals/MarketConfig.sol';\n`;
     imports += `import {VmSafe} from 'forge-std/Vm.sol';\n`;
     imports += `import 'forge-std/Test.sol';\n`;
-    imports += `import {GovernanceV3${market.chain}, GovernanceV3${market.chain}Assets} from 'src/contracts/compoundAddresses/GovernanceV3Mainnet.sol';\n`;
+    imports += `import {GovernanceV3${market.chain}, GovernanceV3${market.chain}Assets} from 'src/contracts/compoundAddresses/GovernanceV3${market.chain}.sol';\n`;
   } else if (type === 'script') {
     imports += `import {VmSafe} from 'forge-std/Vm.sol';\n`;
     imports += `import 'forge-std/Script.sol';\n`;
